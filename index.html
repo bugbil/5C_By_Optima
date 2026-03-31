@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>5C - Digital Credit Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue-900: #001d3d;
+  --blue-800: #003068;
+  --blue-700: #003f88;
+  --blue-600: #005baa;
+  --blue-500: #0072d6;
+  --blue-400: #3d9be9;
+  --blue-100: #e8f1fb;
+  --blue-50: #f0f6ff;
+  --gold-500: #d4920a;
+  --gold-400: #F5A623;
+  --gold-300: #ffc655;
+  --green-600: #059669;
+  --green-500: #0a7c5c;
+  --green-100: #d1fae5;
+  --red-600: #dc2626;
+  --red-500: #d0021b;
+  --red-100: #fee2e2;
+  --amber-600: #d97706;
+  --amber-500: #c87000;
+  --amber-100: #fef3c7;
+  --gray-900: #0f172a;
+  --gray-700: #334155;
+  --gray-600: #475569;
+  --gray-500: #64748b;
+  --gray-400: #94a3b8;
+  --gray-300: #cbd5e1;
+  --gray-200: #e2e8f0;
+  --gray-100: #f1f5f9;
+  --gray-50: #f8fafc;
+  --white: #ffffff;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --shadow-sm: 0 1px 3px rgba(0,31,61,0.06);
+  --shadow-md: 0 4px 16px rgba(0,31,61,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,31,61,0.12);
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100%; min-height: 100vh; overflow-x: hidden; background: var(--gray-50); font-family: var(--font); color: var(--gray-900); }
+input, button, select, textarea { font-family: inherit; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+
+.app-shell { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+@media (min-width: 768px) {
+  .app-shell.logged-in { flex-direction: row; }
+}
+
+/* SIDEBAR */
+.sidebar { display: none; }
+@media (min-width: 768px) {
+  .sidebar {
+    display: flex; flex-direction: column; width: 260px; min-height: 100vh;
+    background: linear-gradient(180deg, var(--blue-800) 0%, var(--blue-900) 100%);
+    padding: 28px 20px; position: fixed; left: 0; top: 0; z-index: 100;
+  }
+  .sidebar .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+  .sidebar .brand-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 14px; color: #fff;
+  }
+  .sidebar .brand-text { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: 1.5px; }
+  .sidebar .brand-sub { font-size: 10px; color: rgba(255,255,255,0.55); margin-top: 2px; letter-spacing: 0.5px; }
+  .sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .sidebar-nav button {
+    display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px;
+    border: none; border-radius: var(--radius-md); background: transparent;
+    color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; text-align: left;
+  }
+  .sidebar-nav button:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
+  .sidebar-nav button.active { background: rgba(255,255,255,0.12); color: #fff; }
+  .sidebar-nav button .nav-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; flex-shrink: 0;
+  }
+  .sidebar-nav button.active .nav-icon { background: rgba(255,255,255,0.15); }
+  .sidebar-user {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 0; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px;
+  }
+  .sidebar-user .avatar {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--blue-500);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 14px;
+  }
+  .sidebar-user .uname { font-size: 12px; font-weight: 700; color: #fff; }
+  .sidebar-user .ubranch { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 1px; }
+  .main-content { margin-left: 260px; flex: 1; }
+}
+
+/* TOPBAR MOBILE */
+.topbar-mobile {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: linear-gradient(135deg, var(--blue-800), var(--blue-900));
+  position: sticky; top: 0; z-index: 50;
+}
+@media (min-width: 768px) { .topbar-mobile { display: none; } }
+.brand-row { display: flex; align-items: center; gap: 10px; }
+.brand-icon-sm {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,0.15); display: flex; align-items: center;
+  justify-content: center; font-weight: 900; font-size: 11px; color: #fff;
+}
+.brand-label { font-size: 17px; font-weight: 900; color: #fff; letter-spacing: 1px; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 5px; }
+.status-text { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600; }
+
+/* BOTTOM NAV MOBILE */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--white); border-top: 1px solid var(--gray-200);
+  display: flex; z-index: 50; padding-bottom: env(safe-area-inset-bottom);
+}
+@media (min-width: 768px) { .bottom-nav { display: none; } }
+.bottom-nav button {
+  flex: 1; border: none; background: none; padding: 10px 4px 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  color: var(--gray-400); font-size: 10px; font-weight: 600; cursor: pointer; transition: color 0.2s;
+}
+.bottom-nav button.active { color: var(--blue-600); }
+.nav-dot {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800;
+}
+.bottom-nav button.active .nav-dot { background: var(--blue-100); color: var(--blue-600); }
+.nav-label { font-size: 10px; }
+
+/* PAGE */
+.page { padding: 20px 16px 100px; max-width: 900px; }
+@media (min-width: 768px) { .page { padding: 32px 40px 60px; } }
+.page-header { font-size: 20px; font-weight: 800; }
+@media (min-width: 768px) { .page-header { font-size: 22px !important; } }
+.section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-500); margin-bottom: 12px; }
+
+/* CARD */
+.card {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px;
+  position: relative; box-shadow: var(--shadow-sm);
+}
+
+/* FORM FIELD */
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 11px; font-weight: 700; color: var(--gray-500); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 10px 12px; border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm); font-size: 13px; background: var(--white);
+  color: var(--gray-900); outline: none; transition: border-color 0.2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue-400); }
+.field input[readonly], .field input[disabled] { background: var(--gray-100); color: var(--gray-500); cursor: not-allowed; }
+.field textarea { resize: vertical; min-height: 72px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .grid-3 { grid-template-columns: 1fr; } }
+
+/* BADGE */
+.badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.badge-green { background: var(--green-100); color: var(--green-600); }
+.badge-blue { background: var(--blue-100); color: var(--blue-600); }
+.badge-amber { background: var(--amber-100); color: var(--amber-600); }
+.badge-red { background: var(--red-100); color: var(--red-600); }
+.badge-gray { background: var(--gray-100); color: var(--gray-500); }
+
+/* BUTTONS */
+.btn-primary {
+  width: 100%; padding: 14px; border-radius: var(--radius-md); border: none;
+  background: linear-gradient(135deg, var(--blue-600), var(--blue-700));
+  color: #fff; font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: all 0.2s; margin-top: 8px;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,63,136,0.35); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-gold {
+  width: 100%; padding: 14px; border-radius: var(--radius-md); border: none;
+  background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+  color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 8px;
+}
+.btn-gold:hover { transform: translateY(-1px); }
+.btn-outline {
+  width: 100%; padding: 12px; border-radius: var(--radius-md);
+  border: 1.5px solid var(--blue-400); background: transparent;
+  color: var(--blue-600); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 6px;
+}
+.btn-outline:hover { background: var(--blue-50); }
+
+/* TABS */
+.tabs { display: flex; gap: 6px; border-bottom: 2px solid var(--gray-100); margin-bottom: 16px; overflow-x: auto; }
+.tab-btn {
+  padding: 8px 14px; border: none; background: none; font-size: 13px;
+  font-weight: 600; color: var(--gray-400); cursor: pointer; white-space: nowrap;
+  border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+}
+.tab-btn.active { color: var(--blue-600); border-bottom-color: var(--blue-600); }
+
+/* STEP */
+.step-row { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; }
+.step-dot {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #fff;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.05)} }
+.step-dot.done { background: var(--green-500); }
+.step-dot.active { background: var(--blue-600); animation: pulse 1.2s infinite; }
+.step-dot.pending { background: var(--gray-300); }
+.step-text { font-size: 13px; padding-top: 4px; color: var(--gray-500); }
+.step-text.done { color: var(--gray-700); font-weight: 600; }
+
+/* 5C SECTION */
+.c5-section { border-left: 3px solid var(--blue-500); padding-left: 12px; margin-bottom: 20px; }
+.c5-section-title { font-size: 13px; font-weight: 800; color: var(--blue-700); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* RESULT BOX */
+.result-box {
+  background: var(--white); border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md); padding: 14px; margin-bottom: 12px;
+}
+.result-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); margin-bottom: 4px; }
+.result-value { font-size: 15px; font-weight: 800; }
+
+/* STAT GRID */
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 480px) { .stat-grid { grid-template-columns: 1fr; } }
+.stat-card {
+  background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+  padding: 14px; cursor: pointer; transition: box-shadow 0.2s; position: relative; overflow: hidden;
+}
+.stat-card:hover { box-shadow: var(--shadow-md); }
+.stat-val { font-size: 24px; font-weight: 900; margin-bottom: 2px; }
+.stat-label { font-size: 11px; color: var(--gray-500); font-weight: 600; }
+
+/* RECENT ITEM */
+.recent-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--gray-100); cursor: pointer; transition: background 0.15s;
+}
+.recent-item:hover { background: var(--gray-50); border-radius: var(--radius-sm); padding-left: 8px; }
+.avatar-circle {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--blue-100);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--blue-600); font-weight: 800; font-size: 14px; flex-shrink: 0;
+}
+
+/* APPROVAL SECTION */
+.approval-card {
+  background: var(--white); border: 2px solid var(--blue-200);
+  border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px;
+}
+.approval-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.approval-icon {
+  width: 48px; height: 48px; border-radius: var(--radius-md);
+  background: var(--blue-100); display: flex; align-items: center;
+  justify-content: center; font-size: 20px; flex-shrink: 0;
+}
+.approval-name { font-size: 15px; font-weight: 700; }
+.approval-role { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+/* INSIGHT ROW */
+.insight-row { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--gray-100); }
+.insight-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.insight-text { font-size: 12px; line-height: 1.6; }
+
+/* DSR METER */
+.dsr-bar { height: 8px; border-radius: 4px; background: var(--gray-200); overflow: hidden; margin-top: 6px; }
+.dsr-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: flex; align-items: flex-end; }
+@media (min-width: 768px) { .modal-overlay { align-items: center; justify-content: center; } }
+.modal-panel {
+  background: var(--white); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  width: 100%; max-height: 80vh; overflow-y: auto; padding: 20px;
+}
+@media (min-width: 768px) { .modal-panel { border-radius: var(--radius-xl); max-width: 560px; max-height: 70vh; } }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.modal-close { border: none; background: var(--gray-100); border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 14px; }
+
+/* LOGIN SCREEN */
+.login-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 60%, var(--blue-500) 100%);
+  position: relative; overflow: hidden;
+}
+.login-grid-overlay {
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image: linear-gradient(var(--white) 1px, transparent 1px), linear-gradient(90deg, var(--white) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.login-glow {
+  position: absolute; width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,114,214,0.3) 0%, transparent 70%);
+  top: -100px; right: -100px;
+}
+.login-container { position: relative; z-index: 10; width: 100%; max-width: 400px; padding: 24px; }
+.login-brand { text-align: center; margin-bottom: 32px; }
+.login-brand-row { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 8px; }
+.login-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 16px; color: #fff;
+}
+.login-title { font-size: 32px; font-weight: 900; color: #fff; letter-spacing: 2px; }
+.login-subtitle { font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 2px; font-weight: 600; }
+.login-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-xl); padding: 24px; backdrop-filter: blur(10px); }
+.login-field { margin-bottom: 16px; }
+.login-field label { display: block; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.login-field input {
+  width: 100%; padding: 12px 14px; border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-md); font-size: 14px; background: rgba(255,255,255,0.08);
+  color: #fff; outline: none; transition: border-color 0.2s;
+}
+.login-field input::placeholder { color: rgba(255,255,255,0.3); }
+.login-field input:focus { border-color: rgba(255,255,255,0.4); }
+.login-btn {
+  width: 100%; padding: 14px; border: none; border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--blue-500), var(--blue-600));
+  color: #fff; font-size: 14px; font-weight: 800; cursor: pointer; letter-spacing: 1px;
+  transition: all 0.2s; margin-top: 4px;
+}
+.login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 32px rgba(0,91,170,0.5); }
+.login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* 5C SPECIFIC STYLES */
+.c5-header {
+  background: linear-gradient(135deg, var(--blue-700), var(--blue-900));
+  border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 16px; color: #fff;
+}
+.c5-header-title { font-size: 16px; font-weight: 800; letter-spacing: 0.5px; }
+.c5-header-sub { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 3px; }
+.c5-header-row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+.c5-header-meta { font-size: 11px; color: rgba(255,255,255,0.7); }
+.c5-header-meta strong { color: #fff; font-weight: 700; }
+
+.parameter-row {
+  display: flex; align-items: flex-start; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.parameter-label { font-size: 12px; font-weight: 600; color: var(--gray-700); flex: 1; min-width: 0; }
+.parameter-desc { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+.score-ring {
+  width: 80px; height: 80px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 4px solid var(--gray-200); flex-shrink: 0;
+}
+.score-ring.good { border-color: var(--green-500); background: var(--green-100); }
+.score-ring.warning { border-color: var(--amber-500); background: var(--amber-100); }
+.score-ring.bad { border-color: var(--red-500); background: var(--red-100); }
+.score-num { font-size: 20px; font-weight: 900; }
+.score-label { font-size: 9px; font-weight: 700; text-transform: uppercase; }
+
+.approval-flow {
+  display: flex; align-items: center; gap: 8px; padding: 10px 0; flex-wrap: wrap;
+}
+.flow-node {
+  background: var(--gray-100); border-radius: var(--radius-sm); padding: 6px 12px;
+  font-size: 11px; font-weight: 700; color: var(--gray-600);
+}
+.flow-node.done { background: var(--green-100); color: var(--green-600); }
+.flow-node.current { background: var(--blue-100); color: var(--blue-700); border: 1.5px solid var(--blue-400); }
+.flow-arrow { color: var(--gray-400); font-size: 14px; }
+
+/* EDITABLE FIELD */
+.editable-field {
+  display: flex; align-items: flex-start; gap: 8px; width: 100%;
+}
+.editable-field .ef-value { flex: 1; font-size: 12px; color: var(--gray-700); line-height: 1.6; min-height: 20px; }
+.editable-field .ef-input {
+  flex: 1; padding: 6px 10px; border: 1.5px solid var(--blue-400); border-radius: var(--radius-sm);
+  font-size: 12px; font-family: inherit; color: var(--gray-900); outline: none; background: var(--blue-50);
+  min-height: 32px; resize: vertical;
+}
+.edit-btn {
+  padding: 3px 8px; border: 1px solid var(--gray-300); border-radius: 4px;
+  background: var(--white); color: var(--gray-500); font-size: 10px; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; flex-shrink: 0; white-space: nowrap;
+}
+.edit-btn:hover { border-color: var(--blue-400); color: var(--blue-600); background: var(--blue-50); }
+.edit-btn.save { border-color: var(--green-500); color: var(--green-600); background: var(--green-100); }
+
+/* KPI GRID */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+@media (min-width: 600px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+.kpi-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-md); padding: 12px 14px; }
+.kpi-val { font-size: 17px; font-weight: 800; }
+.kpi-label { font-size: 10px; color: var(--gray-500); margin-top: 2px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.7.0/dist/es-module-shims.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react?dev",
+    "react-dom/client": "https://esm.sh/react-dom/client?dev"
+  }
+}
+</script>
+<script type="text/babel" data-type="module">
+import React, { StrictMode, useState, useEffect, createContext, useContext } from 'react';
+import { createRoot } from 'react-dom/client';
+
+function formatRp(val) {
+  return "Rp " + Math.abs(val).toLocaleString("id-ID");
+}
+function rand6() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+function randMID() {
+  // 7 digits starting with 7
+  return "7" + String(Math.floor(100000 + Math.random() * 900000));
+}
+function randAPP() {
+  // 7 digits starting with 5
+  return "5" + String(Math.floor(100000 + Math.random() * 900000));
+}
+
+const UserContext = createContext(null);
+
+const TEAM_USERS = [
+  { name: "Putri Bilqis Syafei", branch: "Branch Manager Direct Sales Batam", role: "BM", branches: ["Direct Sales Batam", "Direct Sales Pontianak"] },
+  { name: "Lamhot Manurung", branch: "Branch Manager WTC Mobil Bekas I", role: "BM", branches: ["WTC Mobil Bekas I"] },
+  { name: "Jonner Febriando Saragih", branch: "Branch Manager Direct Sales Tangerang II", role: "BM", branches: ["Direct Sales Tangerang II", "Direct Sales Cilegon"] },
+];
+
+const PRODUK_LIST = ["Used Car", "New Car", "Refinancing", "Refinancing Top Up", "Refinancing For New"];
+
+// ============================================================
+// APLIKASI DATABASE - enriched with full 5C form data matching Excel
+// ============================================================
+function buildAplikasiDB(branchList) {
+  const ALL = [
+    {
+      id: randAPP(), mid: randMID(), name: "Budi Susanto", prod: "New Car", cabang: "Direct Sales Batam",
+      status: "menunggu_bm", tgl: "28 Mar 2026",
+      // Form header
+      cmo: "Susi Susanti", engine: "REGULER 1", nik: "3271012345678901", ph: 285000000,
+      // CHARACTER
+      karakter: {
+        survey: "Baik - Rumah milik sendiri, konsumen kooperatif, tidak ada indikasi konsumen atas nama/fiktif",
+        histori_ybs: "1. BCA KPR - Os. 273.500.000 COLL 1\n2. Toyota Astra Finance - Os. 0 (LUNAS)",
+        histori_pasangan: "-",
+        jejak: "Tidak ada tag negatif di GetContact, profil LinkedIn terpercaya, tidak ada komunitas berisiko",
+        lainnya_char: "-"
+      },
+      // COLATERAL
+      colateral: {
+        kesesuaian: "Sesuai - LCGC Toyota Calya 2024, sesuai dengan profil karyawan swasta",
+        dp_otr: "DP 20% - Rp 57.000.000 dari OTR Rp 285.000.000. Tidak ada indikasi upping.",
+        unit: "Toyota Calya 1.2 Manual 2024",
+        bpkb: "an. Budi Susanto",
+        lainnya_col: "-"
+      },
+      // CAPACITY
+      kapasitas: {
+        dsr: 38, total_angsuran: 3800000, total_penghasilan: 10000000,
+        lama_kerja: "5 tahun 3 bulan di PT Sumber Makmur",
+        fasilitas_aktif: { ybs: 2, pasangan: 0 },
+        slik_ybs: "1. BCA KPR - Os. 273.500.000 COLL 1\n2. Toyota Astra Finance - Os. 0 (LUNAS)",
+        slik_pasangan: "-",
+        fasilitas_besar: { ybs: 1, pasangan: 0 },
+        slik_besar_ybs: "1. BCA KPR - Os. 273.500.000 COLL 1",
+        slik_besar_pasangan: "-",
+        pernah_restruktur: "Tidak pernah",
+        pendapatan_lain: "-",
+        lainnya_cap: "-",
+        saldo: { kredit: 18500000, debit: 16200000, avg: 7800000, akhir: 6500000 }
+      },
+      // CONDITION
+      kondisi: {
+        sektor: "Tidak Berisiko Tinggi",
+        sektor_desc: "Karyawan Swasta bidang distribusi makanan - stabil, tidak terdampak pandemi signifikan",
+        pekerjaan: "Tidak Berisiko Tinggi",
+        status_kerja: "Karyawan Tetap sejak 2020",
+        usaha_lain: "-",
+        lainnya_cond: "-"
+      },
+      // CAPITAL
+      modal: {
+        rumah: "Milik Sendiri (KPR BCA)",
+        kendaraan: "Motor Honda Beat 2022 - milik sendiri",
+        sumber_dana: "Angsuran dari gaji bulanan PT Sumber Makmur",
+        lainnya_modal: "-"
+      },
+      // KESIMPULAN
+      kesimpulan: "1. Konsumen memiliki karakter baik berdasarkan hasil survey\n2. Kapasitas mencukupi dengan DSR 38% (batas aman)\n3. Colateral sesuai profil karyawan swasta\n4. Kondisi kerja stabil sebagai karyawan tetap\n5. Modal cukup dengan kepemilikan rumah sendiri (KPR)",
+      rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Susi Susanti", prod: "Used Car", cabang: "Direct Sales Batam",
+      status: "selesai", tgl: "27 Mar 2026",
+      cmo: "Agus Prabowo", engine: "REGULER 2", nik: "3271014567890123", ph: 195000000,
+      karakter: {
+        survey: "Sangat Baik - Rumah milik sendiri, konsumen ramah dan terbuka, tidak ada indikasi fiktif",
+        histori_ybs: "1. Koperasi Guru - Os. 12.000.000 COLL 1",
+        histori_pasangan: "-",
+        jejak: "Profil media sosial bersih, tidak ada tag negatif",
+        lainnya_char: "-"
+      },
+      colateral: {
+        kesesuaian: "Sesuai - Honda Brio Satya 2024, sesuai profil guru PNS",
+        dp_otr: "DP 25% - Rp 48.750.000 dari OTR Rp 195.000.000. Wajar.",
+        unit: "Honda Brio Satya S MT 2024",
+        bpkb: "an. Susi Susanti",
+        lainnya_col: "-"
+      },
+      kapasitas: {
+        dsr: 29, total_angsuran: 2465000, total_penghasilan: 8500000,
+        lama_kerja: "12 tahun sebagai Guru PNS",
+        fasilitas_aktif: { ybs: 1, pasangan: 0 },
+        slik_ybs: "1. Koperasi Guru - Os. 12.000.000 COLL 1",
+        slik_pasangan: "-",
+        fasilitas_besar: { ybs: 0, pasangan: 0 },
+        slik_besar_ybs: "-",
+        slik_besar_pasangan: "-",
+        pernah_restruktur: "Tidak pernah",
+        pendapatan_lain: "Les privat Rp 1.500.000/bulan",
+        lainnya_cap: "-",
+        saldo: { kredit: 10200000, debit: 8900000, avg: 5400000, akhir: 4800000 }
+      },
+      kondisi: {
+        sektor: "Tidak Berisiko Tinggi",
+        sektor_desc: "PNS Guru - sangat stabil, tidak rawan PHK",
+        pekerjaan: "Tidak Berisiko Tinggi",
+        status_kerja: "PNS sejak 2012",
+        usaha_lain: "Les privat Matematika",
+        lainnya_cond: "-"
+      },
+      modal: {
+        rumah: "Milik Sendiri (KPR BTN)",
+        kendaraan: "-",
+        sumber_dana: "Gaji PNS + honorarium bulanan",
+        lainnya_modal: "-"
+      },
+      kesimpulan: "1. Konsumen PNS dengan profil sangat baik\n2. DSR 29% sangat aman\n3. Tidak ada riwayat tunggak\n4. Kapasitas dan karakter sangat mendukung\n5. Sumber dana stabil dari gaji PNS",
+      rekomendasi: "SETUJU",
+      bm_setuju: true, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Dewi Lestari", prod: "New Car", cabang: "Direct Sales Batam",
+      status: "butuh_rm", tgl: "28 Mar 2026",
+      cmo: "Susi Susanti", engine: "APPROVE 1", nik: "3271015678901234", ph: 320000000,
+      karakter: {
+        survey: "Baik - Kontrak apartemen, konsumen terbuka, tidak ada indikasi fiktif",
+        histori_ybs: "1. BCA KTA - Os. 48.000.000 COLL 1",
+        histori_pasangan: "-",
+        jejak: "Jejak digital bersih, akun LinkedIn aktif di PT Global Teknik",
+        lainnya_char: "-"
+      },
+      colateral: {
+        kesesuaian: "Sesuai - Honda HR-V 2024, sesuai profil manajer perusahaan",
+        dp_otr: "DP 18% - Rp 57.600.000 dari OTR Rp 320.000.000. Wajar.",
+        unit: "Honda HR-V 1.5L SE CVT 2024",
+        bpkb: "an. Dewi Lestari",
+        lainnya_col: "-"
+      },
+      kapasitas: {
+        dsr: 28, total_angsuran: 4200000, total_penghasilan: 15000000,
+        lama_kerja: "3 tahun 2 bulan sebagai Manajer di PT Global Teknik",
+        fasilitas_aktif: { ybs: 1, pasangan: 0 },
+        slik_ybs: "1. BCA KTA - Os. 48.000.000 COLL 1",
+        slik_pasangan: "-",
+        fasilitas_besar: { ybs: 1, pasangan: 0 },
+        slik_besar_ybs: "1. BCA KTA - Os. 48.000.000 COLL 1",
+        slik_besar_pasangan: "-",
+        pernah_restruktur: "Tidak pernah",
+        pendapatan_lain: "-",
+        lainnya_cap: "Engine APPROVE 1 memerlukan approval RM",
+        saldo: { kredit: 21000000, debit: 17500000, avg: 10200000, akhir: 9800000 }
+      },
+      kondisi: {
+        sektor: "Tidak Berisiko Tinggi",
+        sektor_desc: "IT & Telekomunikasi - relatif stabil namun perlu monitoring",
+        pekerjaan: "Tidak Berisiko Tinggi",
+        status_kerja: "Karyawan Tetap sejak 2022",
+        usaha_lain: "-",
+        lainnya_cond: "-"
+      },
+      modal: {
+        rumah: "Kontrak Apartemen",
+        kendaraan: "-",
+        sumber_dana: "Gaji dan bonus tahunan PT Global Teknik",
+        lainnya_modal: "-"
+      },
+      kesimpulan: "1. Profil baik dengan DSR aman 28%\n2. Perlu approval RM karena engine APPROVE 1\n3. Kapasitas dan karakter mendukung\n4. Colateral sesuai profil manajer",
+      rekomendasi: "SETUJU (pending approval RM)",
+      bm_setuju: true, rm_required: true
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Hendra Wijaya", prod: "Used Car", cabang: "WTC Mobil Bekas I",
+      status: "menunggu_bm", tgl: "28 Mar 2026",
+      cmo: "Benny Tan", engine: "REGULER 1", nik: "3271017890123456", ph: 290000000,
+      karakter: {
+        survey: "Cukup - Rumah sewa, konsumen kooperatif, perlu verifikasi lebih lanjut karena ada aktivitas pinjol",
+        histori_ybs: "1. BCA KPR - Os. 378.000.000 COLL 1\n2. Astra Credit - Os. 89.000.000 COLL 1\n3. DanaRupiah (Pinjol) - Os. 4.500.000",
+        histori_pasangan: "1. Bank Mandiri KTA - Os. 15.000.000 COLL 1",
+        jejak: "Ada 1 tag 'pembayaran lambat' di GetContact, profil Facebook aktif normal",
+        lainnya_char: "Terdapat aktivitas pinjol aktif, perlu diperhatikan"
+      },
+      colateral: {
+        kesesuaian: "Sesuai - Toyota Kijang Innova Reborn 2020, sesuai kebutuhan keluarga",
+        dp_otr: "DP 22% - Rp 63.800.000 dari OTR Rp 290.000.000. Wajar.",
+        unit: "Toyota Kijang Innova Reborn 2.0 G AT 2020 (Bekas)",
+        bpkb: "an. Hendra Wijaya",
+        lainnya_col: "-"
+      },
+      kapasitas: {
+        dsr: 42, total_angsuran: 5880000, total_penghasilan: 14000000,
+        lama_kerja: "7 tahun sebagai Supervisor di PT Maju Bersama",
+        fasilitas_aktif: { ybs: 3, pasangan: 1 },
+        slik_ybs: "1. BCA KPR - Os. 378.000.000 COLL 1\n2. Astra Credit - Os. 89.000.000 COLL 1\n3. DanaRupiah (Pinjol) - Os. 4.500.000",
+        slik_pasangan: "1. Bank Mandiri KTA - Os. 15.000.000 COLL 1",
+        fasilitas_besar: { ybs: 2, pasangan: 1 },
+        slik_besar_ybs: "1. BCA KPR - Os. 378.000.000 COLL 1\n2. Astra Credit - Os. 89.000.000 COLL 1",
+        slik_besar_pasangan: "1. Bank Mandiri KTA - Os. 15.000.000 COLL 1",
+        pernah_restruktur: "Tidak pernah",
+        pendapatan_lain: "-",
+        lainnya_cap: "Terdapat 1 fasilitas pinjol aktif, perlu diperhatikan",
+        saldo: { kredit: 16800000, debit: 15200000, avg: 5100000, akhir: 4200000 }
+      },
+      kondisi: {
+        sektor: "Tidak Berisiko Tinggi",
+        sektor_desc: "Logistik dan distribusi - stabil namun rawan PHK di segmen supervisor",
+        pekerjaan: "Tidak Berisiko Tinggi",
+        status_kerja: "Karyawan Tetap sejak 2017",
+        usaha_lain: "-",
+        lainnya_cond: "-"
+      },
+      modal: {
+        rumah: "Kontrak / Sewa",
+        kendaraan: "Sepeda Motor Yamaha NMAX 2021 (cicilan)",
+        sumber_dana: "Gaji bulanan dan tunjangan supervisor",
+        lainnya_modal: "-"
+      },
+      kesimpulan: "1. DSR 42% melebihi batas aman 40%\n2. Ada aktivitas pinjol aktif\n3. Riwayat tunggak 2x\n4. Perlu pertimbangan BM dengan syarat: pelunasan pinjol sebelum akad",
+      rekomendasi: "PERTIMBANGAN KHUSUS",
+      bm_setuju: null, rm_required: false
+    },
+    // Additional dummy konsumen in ONE ME
+    {
+      id: randAPP(), mid: randMID(), name: "Rina Wulandari", prod: "Refinancing", cabang: "Direct Sales Batam",
+      status: "oneme", tgl: "30 Mar 2026",
+      cmo: "Agus Prabowo", engine: "REGULER 1", nik: "3271019876543210", ph: 180000000,
+      karakter: { survey: "Baik - Rumah milik sendiri, konsumen kooperatif", histori_ybs: "1. BRI KPR - Os. 150.000.000 COLL 1", histori_pasangan: "-", jejak: "Tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Avanza 2021", dp_otr: "-", unit: "Toyota Avanza 1.5 G MT 2021", bpkb: "an. Rina Wulandari", lainnya_col: "-" },
+      kapasitas: { dsr: 32, total_angsuran: 2880000, total_penghasilan: 9000000, lama_kerja: "8 tahun di PT Indofood", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BRI KPR - Os. 150.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BRI KPR - Os. 150.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 12000000, debit: 10500000, avg: 6000000, akhir: 5500000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "FMCG - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan Tetap sejak 2018", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (KPR BRI)", kendaraan: "Toyota Avanza 2021", sumber_dana: "Gaji bulanan", lainnya_modal: "-" },
+      kesimpulan: "1. Konsumen baik dengan DSR 32%\n2. Tidak ada riwayat tunggak\n3. Refinancing sesuai profil", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Agus Hermawan", prod: "Refinancing Top Up", cabang: "Direct Sales Batam",
+      status: "oneme", tgl: "30 Mar 2026",
+      cmo: "Susi Susanti", engine: "REGULER 2", nik: "3271016543210987", ph: 220000000,
+      karakter: { survey: "Baik - Konsumen kooperatif, rumah milik sendiri", histori_ybs: "1. BCA Auto - Os. 45.000.000 COLL 1", histori_pasangan: "-", jejak: "Profil bersih di media sosial", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Honda CR-V 2020", dp_otr: "-", unit: "Honda CR-V 1.5 Turbo 2020", bpkb: "an. Agus Hermawan", lainnya_col: "-" },
+      kapasitas: { dsr: 35, total_angsuran: 4200000, total_penghasilan: 12000000, lama_kerja: "10 tahun di PT Telkom", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BCA Auto - Os. 45.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BCA Auto - Os. 45.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Freelance IT Rp 3.000.000/bulan", lainnya_cap: "-", saldo: { kredit: 15000000, debit: 13000000, avg: 8000000, akhir: 7500000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Telekomunikasi - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan Tetap sejak 2016", usaha_lain: "Freelance IT", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Honda CR-V 2020", sumber_dana: "Gaji + freelance", lainnya_modal: "-" },
+      kesimpulan: "1. Profil baik, DSR 35% aman\n2. Sumber pendapatan ganda\n3. Tidak ada tunggak", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Maya Sari", prod: "Refinancing For New", cabang: "WTC Mobil Bekas I",
+      status: "oneme", tgl: "31 Mar 2026",
+      cmo: "Benny Tan", engine: "APPROVE 2", nik: "3271018765432109", ph: 350000000,
+      karakter: { survey: "Baik - Rumah milik sendiri, konsumen kooperatif", histori_ybs: "1. BCA KKB - Os. 120.000.000 COLL 1", histori_pasangan: "1. Mandiri KPR - Os. 280.000.000 COLL 1", jejak: "Profil LinkedIn aktif, tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Fortuner 2024", dp_otr: "DP 20% - Rp 70.000.000 dari OTR Rp 350.000.000", unit: "Toyota Fortuner 2.4 VRZ AT 2024", bpkb: "an. Maya Sari", lainnya_col: "-" },
+      kapasitas: { dsr: 30, total_angsuran: 6000000, total_penghasilan: 20000000, lama_kerja: "6 tahun sebagai Direktur PT Sejahtera Abadi", fasilitas_aktif: { ybs: 1, pasangan: 1 }, slik_ybs: "1. BCA KKB - Os. 120.000.000 COLL 1", slik_pasangan: "1. Mandiri KPR - Os. 280.000.000 COLL 1", fasilitas_besar: { ybs: 1, pasangan: 1 }, slik_besar_ybs: "1. BCA KKB - Os. 120.000.000 COLL 1", slik_besar_pasangan: "1. Mandiri KPR - Os. 280.000.000 COLL 1", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Dividen usaha Rp 5.000.000/bulan", lainnya_cap: "-", saldo: { kredit: 25000000, debit: 22000000, avg: 15000000, akhir: 14000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Perdagangan umum - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Pemilik Usaha sejak 2020", usaha_lain: "PT Sejahtera Abadi - perdagangan umum", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Toyota Innova 2019", sumber_dana: "Gaji + dividen usaha", lainnya_modal: "-" },
+      kesimpulan: "1. DSR 30% sangat aman\n2. Sumber dana beragam\n3. Engine APPROVE 2 memerlukan approval RM", rekomendasi: "SETUJU (pending approval RM)",
+      bm_setuju: null, rm_required: true
+    },
+    // Tangerang II entries
+    {
+      id: randAPP(), mid: randMID(), name: "Rizky Firmansyah", prod: "New Car", cabang: "Direct Sales Tangerang II",
+      status: "menunggu_bm", tgl: "29 Mar 2026",
+      cmo: "Doni Hermawan", engine: "REGULER 2", nik: "3603010987654321", ph: 265000000,
+      karakter: { survey: "Baik - Rumah milik sendiri, konsumen kooperatif, tidak ada indikasi fiktif", histori_ybs: "1. Mandiri KKB - Os. 0 (LUNAS)", histori_pasangan: "-", jejak: "Tidak ada tag negatif di GetContact", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Honda City 2024, sesuai profil staff manajer", dp_otr: "DP 20% - Rp 53.000.000 dari OTR Rp 265.000.000. Wajar.", unit: "Honda City 1.5L RS CVT 2024", bpkb: "an. Rizky Firmansyah", lainnya_col: "-" },
+      kapasitas: { dsr: 33, total_angsuran: 3960000, total_penghasilan: 12000000, lama_kerja: "6 tahun di PT Astra International", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. Mandiri KKB - Os. 0 (LUNAS)", slik_pasangan: "-", fasilitas_besar: { ybs: 0, pasangan: 0 }, slik_besar_ybs: "-", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 14000000, debit: 12000000, avg: 7500000, akhir: 6800000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Otomotif - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan Tetap sejak 2018", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (KPR BNI)", kendaraan: "Yamaha Aerox 2022", sumber_dana: "Gaji bulanan", lainnya_modal: "-" },
+      kesimpulan: "1. Profil baik, DSR 33% aman\n2. Engine REGULER 2 perlu konfirmasi RM\n3. Tidak ada riwayat tunggak", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Putri Handayani", prod: "Used Car", cabang: "Direct Sales Cilegon",
+      status: "oneme", tgl: "30 Mar 2026",
+      cmo: "Rina Kartika", engine: "REGULER 1", nik: "3602019876543210", ph: 185000000,
+      karakter: { survey: "Sangat Baik - Konsumen PNS, rumah milik sendiri", histori_ybs: "1. BRI KTA - Os. 5.000.000 COLL 1", histori_pasangan: "-", jejak: "Profil bersih, aktif di komunitas positif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Avanza 2022, sesuai profil PNS", dp_otr: "DP 25% - Rp 46.250.000 dari OTR Rp 185.000.000.", unit: "Toyota Avanza 1.3 G MT 2022 (Bekas)", bpkb: "an. Putri Handayani", lainnya_col: "-" },
+      kapasitas: { dsr: 28, total_angsuran: 2520000, total_penghasilan: 9000000, lama_kerja: "9 tahun sebagai PNS Kementerian", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BRI KTA - Os. 5.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 0, pasangan: 0 }, slik_besar_ybs: "-", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Tunjangan keluarga", lainnya_cap: "-", saldo: { kredit: 11000000, debit: 9500000, avg: 6000000, akhir: 5500000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "PNS Kementerian - sangat stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "PNS sejak 2015", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "-", sumber_dana: "Gaji PNS", lainnya_modal: "-" },
+      kesimpulan: "1. PNS dengan profil sangat baik\n2. DSR 28% sangat aman\n3. Tidak ada riwayat tunggak", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    // ---- BATCH TAMBAHAN: Direct Sales Batam ----
+    {
+      id: randAPP(), mid: randMID(), name: "Fajar Nugroho", prod: "New Car", cabang: "Direct Sales Batam",
+      status: "menunggu_bm", tgl: "25 Mar 2026", cmo: "Susi Susanti", engine: "REGULER 1", nik: "3171011234567890", ph: 210000000,
+      karakter: { survey: "Baik - Rumah milik sendiri, kooperatif", histori_ybs: "1. Mandiri KPR - Os. 180.000.000 COLL 1", histori_pasangan: "-", jejak: "Tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Daihatsu Xenia 2024", dp_otr: "DP 20% - Rp 42.000.000. Wajar.", unit: "Daihatsu Xenia 1.3 R MT 2024", bpkb: "an. Fajar Nugroho", lainnya_col: "-" },
+      kapasitas: { dsr: 36, total_angsuran: 3240000, total_penghasilan: 9000000, lama_kerja: "4 tahun di PT Indosat", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. Mandiri KPR - Os. 180.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. Mandiri KPR - Os. 180.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 12000000, debit: 10500000, avg: 5500000, akhir: 5000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Telekomunikasi - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan Tetap sejak 2022", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (KPR Mandiri)", kendaraan: "-", sumber_dana: "Gaji bulanan", lainnya_modal: "-" },
+      kesimpulan: "1. Profil baik, DSR 36% aman\n2. Tidak ada riwayat tunggak\n3. Colateral sesuai profil", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Lestari Indah", prod: "Refinancing", cabang: "Direct Sales Batam",
+      status: "selesai", tgl: "22 Mar 2026", cmo: "Agus Prabowo", engine: "REGULER 1", nik: "3171012345678901", ph: 160000000,
+      karakter: { survey: "Sangat Baik - PNS, rumah milik sendiri", histori_ybs: "Tidak ada fasilitas kredit aktif", histori_pasangan: "-", jejak: "Profil bersih", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Honda Jazz 2020 Bekas", dp_otr: "-", unit: "Honda Jazz RS CVT 2020 (Bekas)", bpkb: "an. Lestari Indah", lainnya_col: "-" },
+      kapasitas: { dsr: 24, total_angsuran: 1920000, total_penghasilan: 8000000, lama_kerja: "11 tahun sebagai PNS Dinas Pendidikan", fasilitas_aktif: { ybs: 0, pasangan: 0 }, slik_ybs: "-", slik_pasangan: "-", fasilitas_besar: { ybs: 0, pasangan: 0 }, slik_besar_ybs: "-", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 9500000, debit: 8000000, avg: 4800000, akhir: 4500000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "PNS - sangat stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "PNS sejak 2013", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Honda Jazz 2020", sumber_dana: "Gaji PNS", lainnya_modal: "-" },
+      kesimpulan: "1. PNS profil sangat baik\n2. DSR 24% sangat aman\n3. Tidak ada fasilitas kredit sebelumnya", rekomendasi: "SETUJU",
+      bm_setuju: true, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Arief Budiman", prod: "Used Car", cabang: "Direct Sales Batam",
+      status: "oneme", tgl: "26 Mar 2026", cmo: "Susi Susanti", engine: "REGULER 2", nik: "3171013456789012", ph: 245000000,
+      karakter: { survey: "Baik - Konsumen wiraswasta, kooperatif, omzet stabil", histori_ybs: "1. BCA KKB - Os. 45.000.000 COLL 1", histori_pasangan: "-", jejak: "Tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Rush 2021 Bekas", dp_otr: "DP 20% - Rp 49.000.000. Wajar.", unit: "Toyota Rush TRD Sportivo AT 2021 (Bekas)", bpkb: "an. Arief Budiman", lainnya_col: "-" },
+      kapasitas: { dsr: 31, total_angsuran: 3720000, total_penghasilan: 12000000, lama_kerja: "8 tahun usaha toko material", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BCA KKB - Os. 45.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BCA KKB - Os. 45.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Sewa gudang Rp 2.000.000/bulan", lainnya_cap: "-", saldo: { kredit: 16000000, debit: 13500000, avg: 8000000, akhir: 7200000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Perdagangan material - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Pemilik Usaha sejak 2016", usaha_lain: "Toko material bangunan", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Honda Beat 2020", sumber_dana: "Omzet usaha + sewa", lainnya_modal: "-" },
+      kesimpulan: "1. Wiraswasta dengan omzet stabil\n2. DSR 31% aman\n3. Tidak ada riwayat tunggak", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Nurul Hidayati", prod: "New Car", cabang: "Direct Sales Batam",
+      status: "selesai", tgl: "20 Mar 2026", cmo: "Agus Prabowo", engine: "APPROVE 1", nik: "3171014567890123", ph: 380000000,
+      karakter: { survey: "Sangat Baik - Direktur perusahaan, rumah milik sendiri mewah", histori_ybs: "1. BCA KPR - Os. 550.000.000 COLL 1\n2. Panin KKB - Os. 0 (LUNAS)", histori_pasangan: "1. BNI KPR - Os. 320.000.000 COLL 1", jejak: "Profil profesional aktif di LinkedIn, tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Camry 2024, sesuai profil direktur", dp_otr: "DP 25% - Rp 95.000.000 dari OTR Rp 380.000.000.", unit: "Toyota Camry 2.5 HV 2024", bpkb: "an. Nurul Hidayati", lainnya_col: "-" },
+      kapasitas: { dsr: 27, total_angsuran: 8100000, total_penghasilan: 30000000, lama_kerja: "5 tahun sebagai Direktur PT Maju Jaya", fasilitas_aktif: { ybs: 1, pasangan: 1 }, slik_ybs: "1. BCA KPR - Os. 550.000.000 COLL 1", slik_pasangan: "1. BNI KPR - Os. 320.000.000 COLL 1", fasilitas_besar: { ybs: 1, pasangan: 1 }, slik_besar_ybs: "1. BCA KPR - Os. 550.000.000 COLL 1", slik_besar_pasangan: "1. BNI KPR - Os. 320.000.000 COLL 1", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Dividen Rp 8.000.000/bulan", lainnya_cap: "Perlu approval RM karena engine APPROVE 1", saldo: { kredit: 40000000, debit: 35000000, avg: 22000000, akhir: 20000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Industri manufaktur - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Pemilik/Direktur sejak 2019", usaha_lain: "PT Maju Jaya - manufaktur", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Lexus RX 2022", sumber_dana: "Gaji + dividen", lainnya_modal: "-" },
+      kesimpulan: "1. DSR 27% sangat aman\n2. Profil direktur dengan pendapatan tinggi\n3. Engine APPROVE 1 sudah mendapat approval RM", rekomendasi: "SETUJU (sudah approval RM)",
+      bm_setuju: true, rm_required: true
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Teguh Prasetyo", prod: "Used Car", cabang: "Direct Sales Batam",
+      status: "menunggu_bm", tgl: "29 Mar 2026", cmo: "Susi Susanti", engine: "REGULER 1", nik: "3171015678901234", ph: 155000000,
+      karakter: { survey: "Cukup - Rumah kontrakan, konsumen kooperatif", histori_ybs: "1. BRI KUR - Os. 18.000.000 COLL 1", histori_pasangan: "-", jejak: "Tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Honda Brio 2022 Bekas", dp_otr: "DP 25% - Rp 38.750.000. Wajar.", unit: "Honda Brio Satya S MT 2022 (Bekas)", bpkb: "an. Teguh Prasetyo", lainnya_col: "-" },
+      kapasitas: { dsr: 38, total_angsuran: 2660000, total_penghasilan: 7000000, lama_kerja: "3 tahun di CV Sumber Rezeki", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BRI KUR - Os. 18.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 0, pasangan: 0 }, slik_besar_ybs: "-", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 8000000, debit: 7200000, avg: 3500000, akhir: 3000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Perdagangan - relatif stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan Tetap sejak 2023", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Kontrak", kendaraan: "-", sumber_dana: "Gaji bulanan", lainnya_modal: "-" },
+      kesimpulan: "1. DSR 38% mendekati batas\n2. Rumah kontrakan perlu perhatian\n3. Lama kerja baru 3 tahun", rekomendasi: "PERTIMBANGAN KHUSUS",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Marlina Situmorang", prod: "Refinancing Top Up", cabang: "Direct Sales Batam",
+      status: "oneme", tgl: "31 Mar 2026", cmo: "Agus Prabowo", engine: "REGULER 1", nik: "3171016789012345", ph: 195000000,
+      karakter: { survey: "Baik - Rumah milik sendiri, konsumen sudah pernah pinjam di BCA Finance", histori_ybs: "1. BCA Finance KKB - Os. 0 (LUNAS)\n2. BCA KTA - Os. 8.000.000 COLL 1", histori_pasangan: "-", jejak: "Profil bersih", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Mitsubishi Xpander 2022", dp_otr: "-", unit: "Mitsubishi Xpander Ultimate AT 2022", bpkb: "an. Marlina Situmorang", lainnya_col: "-" },
+      kapasitas: { dsr: 32, total_angsuran: 3520000, total_penghasilan: 11000000, lama_kerja: "7 tahun sebagai Kepala Bagian PT Batam Tech", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BCA KTA - Os. 8.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 0, pasangan: 0 }, slik_besar_ybs: "-", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 14000000, debit: 12000000, avg: 7000000, akhir: 6500000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Teknologi industri - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan Tetap sejak 2017", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (KPR BRI)", kendaraan: "Mitsubishi Xpander 2022", sumber_dana: "Gaji bulanan", lainnya_modal: "-" },
+      kesimpulan: "1. Repeat customer BCA Finance\n2. DSR 32% aman\n3. Track record sangat baik", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    // ---- BATCH TAMBAHAN: Direct Sales Pontianak ----
+    {
+      id: randAPP(), mid: randMID(), name: "Susilo Bambang", prod: "New Car", cabang: "Direct Sales Pontianak",
+      status: "menunggu_bm", tgl: "28 Mar 2026", cmo: "Doni Hermawan", engine: "REGULER 1", nik: "6171011234567890", ph: 230000000,
+      karakter: { survey: "Baik - Konsumen kooperatif, rumah milik sendiri", histori_ybs: "1. BNI KPR - Os. 210.000.000 COLL 1", histori_pasangan: "-", jejak: "Tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Calya 2024, sesuai profil karyawan", dp_otr: "DP 20% - Rp 46.000.000. Wajar.", unit: "Toyota Calya G MT 2024", bpkb: "an. Susilo Bambang", lainnya_col: "-" },
+      kapasitas: { dsr: 34, total_angsuran: 3400000, total_penghasilan: 10000000, lama_kerja: "6 tahun di PT Perkebunan Nusantara", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BNI KPR - Os. 210.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BNI KPR - Os. 210.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 13000000, debit: 11500000, avg: 6500000, akhir: 6000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Perkebunan - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan Tetap sejak 2018", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (KPR BNI)", kendaraan: "Honda Beat 2021", sumber_dana: "Gaji bulanan", lainnya_modal: "-" },
+      kesimpulan: "1. Profil baik, DSR 34% aman\n2. Sektor perkebunan stabil\n3. Tidak ada riwayat tunggak", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Dewi Fortuna", prod: "Refinancing", cabang: "Direct Sales Pontianak",
+      status: "selesai", tgl: "21 Mar 2026", cmo: "Doni Hermawan", engine: "REGULER 2", nik: "6171012345678901", ph: 175000000,
+      karakter: { survey: "Baik - Guru swasta, rumah milik sendiri, kooperatif", histori_ybs: "1. BCA KKB - Os. 0 (LUNAS)", histori_pasangan: "1. BRI KPR - Os. 145.000.000 COLL 1", jejak: "Profil Facebook aktif, tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Suzuki Ertiga 2021 Bekas", dp_otr: "-", unit: "Suzuki Ertiga GX AT 2021 (Bekas)", bpkb: "an. Dewi Fortuna", lainnya_col: "-" },
+      kapasitas: { dsr: 30, total_angsuran: 2700000, total_penghasilan: 9000000, lama_kerja: "9 tahun guru swasta", fasilitas_aktif: { ybs: 0, pasangan: 1 }, slik_ybs: "-", slik_pasangan: "1. BRI KPR - Os. 145.000.000 COLL 1", fasilitas_besar: { ybs: 0, pasangan: 1 }, slik_besar_ybs: "-", slik_besar_pasangan: "1. BRI KPR - Os. 145.000.000 COLL 1", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Les privat Rp 1.200.000/bulan", lainnya_cap: "-", saldo: { kredit: 10500000, debit: 9200000, avg: 5200000, akhir: 4800000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Pendidikan - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Guru Tetap sejak 2015", usaha_lain: "Les privat", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Suzuki Ertiga 2021", sumber_dana: "Gaji + les privat", lainnya_modal: "-" },
+      kesimpulan: "1. Profil baik, DSR 30% aman\n2. Pendapatan ganda stabil\n3. Tidak ada riwayat tunggak", rekomendasi: "SETUJU",
+      bm_setuju: true, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Hendry Kurniawan", prod: "Used Car", cabang: "Direct Sales Pontianak",
+      status: "oneme", tgl: "30 Mar 2026", cmo: "Rina Kartika", engine: "REGULER 1", nik: "6171013456789012", ph: 200000000,
+      karakter: { survey: "Baik - Pengusaha tambang pasir, konsumen kooperatif", histori_ybs: "1. BRI KUR - Os. 30.000.000 COLL 1", histori_pasangan: "-", jejak: "Tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Hilux 2020 Bekas, sesuai profil pengusaha", dp_otr: "DP 22% - Rp 44.000.000. Wajar.", unit: "Toyota Hilux D-Cab 2.4L 4x4 AT 2020 (Bekas)", bpkb: "an. Hendry Kurniawan", lainnya_col: "-" },
+      kapasitas: { dsr: 33, total_angsuran: 3960000, total_penghasilan: 12000000, lama_kerja: "10 tahun usaha tambang pasir", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BRI KUR - Os. 30.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 0, pasangan: 0 }, slik_besar_ybs: "-", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 18000000, debit: 15000000, avg: 9000000, akhir: 8500000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Pertambangan rakyat - fluktuatif tapi konsisten", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Pemilik Usaha sejak 2014", usaha_lain: "Tambang pasir sungai", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Toyota Kijang 2015 (milik usaha)", sumber_dana: "Omzet usaha tambang", lainnya_modal: "-" },
+      kesimpulan: "1. Pengusaha dengan rekam jejak baik\n2. DSR 33% aman\n3. Saldo rekening kuat", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    // ---- BATCH TAMBAHAN: WTC Mobil Bekas I ----
+    {
+      id: randAPP(), mid: randMID(), name: "Bambang Sutrisno", prod: "Used Car", cabang: "WTC Mobil Bekas I",
+      status: "menunggu_bm", tgl: "27 Mar 2026", cmo: "Benny Tan", engine: "REGULER 1", nik: "3271021234567890", ph: 320000000,
+      karakter: { survey: "Baik - Konsumen dokter, rumah milik sendiri", histori_ybs: "1. BCA KPR - Os. 400.000.000 COLL 1", histori_pasangan: "-", jejak: "Profil LinkedIn terverifikasi dokter spesialis", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Fortuner 2021 Bekas, sesuai profil dokter", dp_otr: "DP 20% - Rp 64.000.000. Wajar.", unit: "Toyota Fortuner 2.4 VRZ AT 2021 (Bekas)", bpkb: "an. Bambang Sutrisno", lainnya_col: "-" },
+      kapasitas: { dsr: 26, total_angsuran: 6240000, total_penghasilan: 24000000, lama_kerja: "8 tahun dokter spesialis RS Swasta", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BCA KPR - Os. 400.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BCA KPR - Os. 400.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Praktik pribadi Rp 6.000.000/bulan", lainnya_cap: "-", saldo: { kredit: 32000000, debit: 28000000, avg: 18000000, akhir: 16000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Kesehatan - sangat stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Dokter Spesialis sejak 2016", usaha_lain: "Praktik pribadi", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Honda CR-V 2019", sumber_dana: "Gaji + praktik", lainnya_modal: "-" },
+      kesimpulan: "1. Profil dokter spesialis sangat baik\n2. DSR 26% sangat aman\n3. Pendapatan ganda dan stabil", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Ratna Dewi Kusuma", prod: "Refinancing For New", cabang: "WTC Mobil Bekas I",
+      status: "selesai", tgl: "18 Mar 2026", cmo: "Benny Tan", engine: "REGULER 1", nik: "3271022345678901", ph: 275000000,
+      karakter: { survey: "Baik - Notaris, rumah milik sendiri, konsumen kooperatif", histori_ybs: "1. BCA KPR - Os. 350.000.000 COLL 1\n2. BNI KTA - Os. 0 (LUNAS)", histori_pasangan: "-", jejak: "Profil profesional, tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Alphard 2020 Bekas, sesuai profil notaris", dp_otr: "-", unit: "Toyota Alphard 2.5 G AT 2020 (Bekas)", bpkb: "an. Ratna Dewi Kusuma", lainnya_col: "-" },
+      kapasitas: { dsr: 29, total_angsuran: 7250000, total_penghasilan: 25000000, lama_kerja: "12 tahun sebagai notaris", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BCA KPR - Os. 350.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BCA KPR - Os. 350.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 30000000, debit: 26000000, avg: 16000000, akhir: 15000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Profesi hukum - sangat stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Notaris Mandiri sejak 2012", usaha_lain: "Kantor Notaris", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Toyota Innova 2019", sumber_dana: "Honorarium notaris", lainnya_modal: "-" },
+      kesimpulan: "1. Profil notaris sangat baik\n2. DSR 29% aman\n3. Track record sangat bersih", rekomendasi: "SETUJU",
+      bm_setuju: true, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Dodi Saputra", prod: "Used Car", cabang: "WTC Mobil Bekas I",
+      status: "oneme", tgl: "29 Mar 2026", cmo: "Benny Tan", engine: "REGULER 2", nik: "3271023456789012", ph: 185000000,
+      karakter: { survey: "Cukup - Kontrakan, konsumen kooperatif, ada 1 tunggak 2 tahun lalu", histori_ybs: "1. Mandiri KTA - Os. 22.000.000 COLL 1\n2. FIF - Os. 0 (LUNAS, pernah 1x tunggak)", histori_pasangan: "-", jejak: "Tidak ada tag negatif", lainnya_char: "Pernah 1x tunggak di FIF, sudah lunas" },
+      colateral: { kesesuaian: "Sesuai - Honda HRV 2019 Bekas", dp_otr: "DP 25% - Rp 46.250.000. Lebih besar dari minimum.", unit: "Honda HRV 1.5L E CVT 2019 (Bekas)", bpkb: "an. Dodi Saputra", lainnya_col: "-" },
+      kapasitas: { dsr: 37, total_angsuran: 3330000, total_penghasilan: 9000000, lama_kerja: "5 tahun di PT Sinarmas", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. Mandiri KTA - Os. 22.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 0, pasangan: 0 }, slik_besar_ybs: "-", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "Perhatikan riwayat tunggak FIF", saldo: { kredit: 11000000, debit: 9800000, avg: 4500000, akhir: 4000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Keuangan dan investasi - stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan Tetap sejak 2019", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Kontrak", kendaraan: "-", sumber_dana: "Gaji bulanan", lainnya_modal: "-" },
+      kesimpulan: "1. Ada riwayat tunggak 1x (sudah lunas)\n2. DSR 37% mendekati batas\n3. Perlu pertimbangan dengan syarat", rekomendasi: "PERTIMBANGAN KHUSUS",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Yanti Permatasari", prod: "Used Car", cabang: "WTC Mobil Bekas I",
+      status: "selesai", tgl: "15 Mar 2026", cmo: "Benny Tan", engine: "REGULER 1", nik: "3271024567890123", ph: 145000000,
+      karakter: { survey: "Sangat Baik - PNS, rumah milik sendiri, konsumen repeat", histori_ybs: "1. BCA Finance KKB - Os. 0 (LUNAS)", histori_pasangan: "-", jejak: "Profil bersih, repeat customer BCA Finance", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Honda Brio 2021 Bekas, sesuai profil PNS", dp_otr: "DP 25% - Rp 36.250.000. Wajar.", unit: "Honda Brio RS CVT 2021 (Bekas)", bpkb: "an. Yanti Permatasari", lainnya_col: "-" },
+      kapasitas: { dsr: 27, total_angsuran: 2160000, total_penghasilan: 8000000, lama_kerja: "14 tahun PNS Pemkot", fasilitas_aktif: { ybs: 0, pasangan: 0 }, slik_ybs: "-", slik_pasangan: "-", fasilitas_besar: { ybs: 0, pasangan: 0 }, slik_besar_ybs: "-", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Tunjangan jabatan Rp 1.500.000/bulan", lainnya_cap: "-", saldo: { kredit: 10000000, debit: 8500000, avg: 5000000, akhir: 4800000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "PNS Pemkot - sangat stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "PNS sejak 2010", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (SHM)", kendaraan: "Honda Brio 2021", sumber_dana: "Gaji + tunjangan", lainnya_modal: "-" },
+      kesimpulan: "1. Repeat customer BCA Finance\n2. DSR 27% sangat aman\n3. PNS profil sangat baik", rekomendasi: "SETUJU",
+      bm_setuju: true, rm_required: false
+    },
+    // ---- BATCH TAMBAHAN: Direct Sales Tangerang II ----
+    {
+      id: randAPP(), mid: randMID(), name: "Anita Rahayu", prod: "New Car", cabang: "Direct Sales Tangerang II",
+      status: "selesai", tgl: "19 Mar 2026", cmo: "Doni Hermawan", engine: "REGULER 1", nik: "3603021234567890", ph: 255000000,
+      karakter: { survey: "Baik - Karyawan BUMN, rumah milik sendiri", histori_ybs: "1. BTN KPR - Os. 195.000.000 COLL 1", histori_pasangan: "-", jejak: "Tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Toyota Veloz 2024", dp_otr: "DP 20% - Rp 51.000.000. Wajar.", unit: "Toyota Veloz Q CVT 2024", bpkb: "an. Anita Rahayu", lainnya_col: "-" },
+      kapasitas: { dsr: 33, total_angsuran: 3960000, total_penghasilan: 12000000, lama_kerja: "7 tahun di PLN", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BTN KPR - Os. 195.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BTN KPR - Os. 195.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 15000000, debit: 13000000, avg: 7500000, akhir: 7000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "BUMN - sangat stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan BUMN sejak 2017", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (KPR BTN)", kendaraan: "Honda Beat 2020", sumber_dana: "Gaji bulanan BUMN", lainnya_modal: "-" },
+      kesimpulan: "1. Karyawan BUMN profil sangat baik\n2. DSR 33% aman\n3. Tidak ada riwayat tunggak", rekomendasi: "SETUJU",
+      bm_setuju: true, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Muhamad Iqbal", prod: "Used Car", cabang: "Direct Sales Tangerang II",
+      status: "menunggu_bm", tgl: "30 Mar 2026", cmo: "Doni Hermawan", engine: "REGULER 1", nik: "3603022345678901", ph: 175000000,
+      karakter: { survey: "Baik - Konsumen kooperatif, kontrakan, usaha warung makan", histori_ybs: "1. BRI KUR - Os. 25.000.000 COLL 1", histori_pasangan: "-", jejak: "Tidak ada tag negatif di GetContact", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Daihatsu Xenia 2020 Bekas, untuk angkutan usaha", dp_otr: "DP 22% - Rp 38.500.000. Wajar.", unit: "Daihatsu Xenia R Sporty AT 2020 (Bekas)", bpkb: "an. Muhamad Iqbal", lainnya_col: "-" },
+      kapasitas: { dsr: 35, total_angsuran: 3150000, total_penghasilan: 9000000, lama_kerja: "6 tahun usaha warung makan", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BRI KUR - Os. 25.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 0, pasangan: 0 }, slik_besar_ybs: "-", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 11000000, debit: 9500000, avg: 5000000, akhir: 4500000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "F&B - relatif stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Pemilik Usaha sejak 2018", usaha_lain: "Warung makan Padang", lainnya_cond: "-" },
+      modal: { rumah: "Kontrak", kendaraan: "-", sumber_dana: "Omzet warung makan", lainnya_modal: "-" },
+      kesimpulan: "1. Usaha warung makan 6 tahun berjalan\n2. DSR 35% aman\n3. Kendaraan untuk operasional usaha", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Sri Wahyuni", prod: "Refinancing", cabang: "Direct Sales Tangerang II",
+      status: "oneme", tgl: "31 Mar 2026", cmo: "Rina Kartika", engine: "REGULER 1", nik: "3603023456789012", ph: 220000000,
+      karakter: { survey: "Sangat Baik - Apoteker RS, rumah milik sendiri", histori_ybs: "1. BCA KPR - Os. 280.000.000 COLL 1", histori_pasangan: "1. Mandiri KTA - Os. 0 (LUNAS)", jejak: "Profil profesional bersih", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Honda CR-V 2021", dp_otr: "-", unit: "Honda CR-V 1.5 Turbo SE CVT 2021", bpkb: "an. Sri Wahyuni", lainnya_col: "-" },
+      kapasitas: { dsr: 31, total_angsuran: 4340000, total_penghasilan: 14000000, lama_kerja: "9 tahun Apoteker RS Siloam", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BCA KPR - Os. 280.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BCA KPR - Os. 280.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "-", lainnya_cap: "-", saldo: { kredit: 17000000, debit: 15000000, avg: 9000000, akhir: 8500000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Kesehatan - sangat stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Apoteker Tetap sejak 2015", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (KPR BCA)", kendaraan: "Honda CR-V 2021", sumber_dana: "Gaji RS", lainnya_modal: "-" },
+      kesimpulan: "1. Profesi kesehatan sangat stabil\n2. DSR 31% aman\n3. Track record bersih", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    // ---- BATCH TAMBAHAN: Direct Sales Cilegon ----
+    {
+      id: randAPP(), mid: randMID(), name: "Hasan Basri", prod: "New Car", cabang: "Direct Sales Cilegon",
+      status: "menunggu_bm", tgl: "27 Mar 2026", cmo: "Rina Kartika", engine: "REGULER 1", nik: "3602021234567890", ph: 270000000,
+      karakter: { survey: "Baik - Karyawan pabrik baja, rumah milik sendiri", histori_ybs: "1. BTN KPR - Os. 220.000.000 COLL 1", histori_pasangan: "-", jejak: "Tidak ada tag negatif", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Mitsubishi Pajero Sport 2022, sesuai profil karyawan pabrik senior", dp_otr: "DP 20% - Rp 54.000.000. Wajar.", unit: "Mitsubishi Pajero Sport Dakar 4x2 AT 2022", bpkb: "an. Hasan Basri", lainnya_col: "-" },
+      kapasitas: { dsr: 34, total_angsuran: 5440000, total_penghasilan: 16000000, lama_kerja: "15 tahun di Krakatau Steel", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BTN KPR - Os. 220.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BTN KPR - Os. 220.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Lembur dan insentif Rp 3.000.000/bulan", lainnya_cap: "-", saldo: { kredit: 20000000, debit: 17000000, avg: 10000000, akhir: 9500000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "Industri baja - stabil, strategis", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "Karyawan Tetap sejak 2009", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (KPR BTN)", kendaraan: "Mitsubishi L300 2018 (kendaraan operasional)", sumber_dana: "Gaji + insentif", lainnya_modal: "-" },
+      kesimpulan: "1. 15 tahun di Krakatau Steel, profil sangat baik\n2. DSR 34% aman\n3. Pendapatan stabil dengan insentif rutin", rekomendasi: "SETUJU",
+      bm_setuju: null, rm_required: false
+    },
+    {
+      id: randAPP(), mid: randMID(), name: "Siti Rohmah", prod: "Used Car", cabang: "Direct Sales Cilegon",
+      status: "selesai", tgl: "23 Mar 2026", cmo: "Rina Kartika", engine: "REGULER 1", nik: "3602022345678901", ph: 165000000,
+      karakter: { survey: "Sangat Baik - Bidan puskesmas, rumah milik sendiri", histori_ybs: "1. BNI KPR - Os. 130.000.000 COLL 1", histori_pasangan: "-", jejak: "Profil bersih, aktif di organisasi kesehatan", lainnya_char: "-" },
+      colateral: { kesesuaian: "Sesuai - Honda Freed 2020 Bekas, sesuai profil bidan", dp_otr: "DP 25% - Rp 41.250.000. Wajar.", unit: "Honda Freed 1.5 E CVT 2020 (Bekas)", bpkb: "an. Siti Rohmah", lainnya_col: "-" },
+      kapasitas: { dsr: 29, total_angsuran: 2610000, total_penghasilan: 9000000, lama_kerja: "10 tahun Bidan ASN Puskesmas", fasilitas_aktif: { ybs: 1, pasangan: 0 }, slik_ybs: "1. BNI KPR - Os. 130.000.000 COLL 1", slik_pasangan: "-", fasilitas_besar: { ybs: 1, pasangan: 0 }, slik_besar_ybs: "1. BNI KPR - Os. 130.000.000 COLL 1", slik_besar_pasangan: "-", pernah_restruktur: "Tidak pernah", pendapatan_lain: "Honor jaga malam", lainnya_cap: "-", saldo: { kredit: 11000000, debit: 9500000, avg: 5500000, akhir: 5000000 } },
+      kondisi: { sektor: "Tidak Berisiko Tinggi", sektor_desc: "ASN Kesehatan - sangat stabil", pekerjaan: "Tidak Berisiko Tinggi", status_kerja: "ASN sejak 2014", usaha_lain: "-", lainnya_cond: "-" },
+      modal: { rumah: "Milik Sendiri (KPR BNI)", kendaraan: "Honda Freed 2020", sumber_dana: "Gaji ASN + honor", lainnya_modal: "-" },
+      kesimpulan: "1. ASN profil sangat baik\n2. DSR 29% aman\n3. Tidak ada riwayat tunggak", rekomendasi: "SETUJU",
+      bm_setuju: true, rm_required: false
+    },
+  ];
+  return ALL.filter(a => branchList.includes(a.cabang));
+}
+
+/* ================================================================
+   EDITABLE FIELD COMPONENT
+   ================================================================ */
+function EditableField({ value, onChange, multiline }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+
+  function handleSave() {
+    onChange(draft);
+    setEditing(false);
+  }
+  function handleCancel() {
+    setDraft(value);
+    setEditing(false);
+  }
+
+  if (editing) {
+    return (
+      <div className="editable-field" style={{ marginTop: 6 }}>
+        {multiline ? (
+          <textarea className="ef-input" value={draft} onChange={e => setDraft(e.target.value)} rows={3} autoFocus />
+        ) : (
+          <input className="ef-input" value={draft} onChange={e => setDraft(e.target.value)} autoFocus onKeyDown={e => e.key === "Enter" && handleSave()} />
+        )}
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <button className="edit-btn save" onClick={handleSave}>Simpan</button>
+          <button className="edit-btn" onClick={handleCancel}>Batal</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="editable-field" style={{ marginTop: 6 }}>
+      <div className="ef-value" style={{ whiteSpace: "pre-wrap" }}>{value || "-"}</div>
+      <button className="edit-btn" onClick={() => { setDraft(value); setEditing(true); }}>Edit</button>
+    </div>
+  );
+}
+
+/* ================================================================
+   LOGIN SCREEN
+   ================================================================ */
+function LoginScreen({ onLogin }) {
+  const [loading, setLoading] = useState(false);
+  const [dots, setDots] = useState(0);
+  const [nip, setNip] = useState("20180605");
+  const [pass, setPass] = useState("password123");
+  useEffect(() => {
+    const iv = setInterval(() => setDots(d => (d + 1) % 4), 400);
+    return () => clearInterval(iv);
+  }, []);
+  function handleLogin() {
+    setLoading(true);
+    setTimeout(() => { setLoading(false); onLogin(); }, 1800);
+  }
+  return (
+    <div className="login-screen">
+      <div className="login-grid-overlay" />
+      <div className="login-glow" />
+      <div className="login-container">
+        <div className="login-brand">
+          <div className="login-brand-row">
+            <div className="login-icon">5C</div>
+            <div style={{ textAlign: "left" }}>
+              <div className="login-title" style={{ fontSize: 26 }}>5C Digital</div>
+              <div className="login-subtitle">BY TIM OPTIMA</div>
+            </div>
+          </div>
+        </div>
+        <div className="login-card">
+          <div className="login-field">
+            <label>User ID / NIP</label>
+            <input value={nip} onChange={e => setNip(e.target.value)} placeholder="Masukkan NIP" />
+          </div>
+          <div className="login-field">
+            <label>Password</label>
+            <input value={pass} onChange={e => setPass(e.target.value)} type="password" placeholder="Masukkan password" />
+          </div>
+          <button className="login-btn" onClick={handleLogin} disabled={loading}>
+            {loading ? "MENGAUTENTIKASI" + ".".repeat(dots) : "MASUK"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   DASHBOARD SCREEN
+   ================================================================ */
+function DashboardScreen({ onSelectAplikasi }) {
+  const currentUser = useContext(UserContext);
+  const aplikasi = buildAplikasiDB(currentUser.branches);
+  const totalBulan = aplikasi.filter(a => a.status !== "oneme");
+  const selesai = aplikasi.filter(a => a.status === "selesai");
+  const oneme = aplikasi.filter(a => a.status === "oneme");
+
+  const [activeModal, setActiveModal] = useState(null);
+
+  // ONE ME statuses are auto-pulled from ONE ME system (fixed values)
+  const ONE_ME_STATUS_MAP = { "REGULER 1": "Entry CMO", "REGULER 2": "Checker", "APPROVE 1": "Save BM", "APPROVE 2": "Save BM", "REJECT 1": "Save BM" };
+
+  const STATS = [
+    { label: "Total Aplikasi Bulan Ini", val: String(totalBulan.length), color: "var(--blue-600)", barColor: "var(--blue-600)", list: totalBulan },
+    { label: "Aplikasi ONE ME\nMenunggu Approval", val: String(oneme.length), color: "var(--amber-500)", barColor: "var(--amber-500)", list: oneme },
+    { label: "Selesai", val: String(selesai.length), color: "var(--green-500)", barColor: "var(--green-500)", list: selesai },
+  ];
+
+  return (
+    <div className="page">
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ fontSize: 20, fontWeight: 800 }} className="page-header">
+          Selamat Pagi, <span style={{ color: "var(--blue-600)" }}>{currentUser.name}</span>
+        </div>
+        <div style={{ fontSize: 12, color: "var(--gray-500)", marginTop: 3 }}>{currentUser.branch}</div>
+      </div>
+
+      {activeModal && (
+        <div className="modal-overlay" onClick={() => setActiveModal(null)}>
+          <div className="modal-panel" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <div style={{ fontSize: 17, fontWeight: 800 }}>{activeModal.label.replace("\n", " ")}</div>
+                <div style={{ fontSize: 12, color: "var(--gray-500)", marginTop: 2 }}>{activeModal.list.length} aplikasi</div>
+              </div>
+              <button className="modal-close" onClick={() => setActiveModal(null)}>✕</button>
+            </div>
+            <div>
+              <div style={{ display: "grid", gridTemplateColumns: "80px 70px 1fr 110px 90px", gap: 8, padding: "8px 0", borderBottom: "2px solid var(--gray-200)", fontSize: 10, fontWeight: 700, color: "var(--gray-500)", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                <div>APP ID</div>
+                <div>MID</div>
+                <div>Nama Konsumen</div>
+                <div>Produk</div>
+                <div>Status</div>
+              </div>
+              {activeModal.list.map((item, i) => (
+                <div key={i}
+                  onClick={() => {
+                    setActiveModal(null);
+                    onSelectAplikasi(item);
+                  }}
+                  style={{ display: "grid", gridTemplateColumns: "80px 70px 1fr 110px 90px", gap: 8, padding: "10px 0", borderBottom: "1px solid var(--gray-100)", cursor: "pointer", alignItems: "center", fontSize: 12, transition: "background 0.15s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "var(--gray-50)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <div style={{ fontWeight: 600, color: "var(--blue-600)", fontSize: 11 }}>{item.id}</div>
+                  <div style={{ fontSize: 11, color: "var(--gray-600)" }}>{item.mid}</div>
+                  <div style={{ fontWeight: 600 }}>{item.name}</div>
+                  <div style={{ fontSize: 11, color: "var(--gray-600)" }}>{item.prod}</div>
+                  <div>
+                    {item.status === "oneme" ? (
+                      <span className="badge badge-blue" style={{ fontSize: 9 }}>
+                        {ONE_ME_STATUS_MAP[item.engine] || "Save BM"}
+                      </span>
+                    ) : (
+                      <span className={`badge ${item.status === "selesai" ? "badge-green" : item.status === "butuh_rm" ? "badge-amber" : "badge-amber"}`} style={{ fontSize: 9 }}>
+                        {item.status === "selesai" ? "Selesai" : item.status === "butuh_rm" ? "Butuh RM" : "Pending"}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+
+      <div className="stat-grid" style={{ marginBottom: 24 }}>
+        {STATS.map((s, i) => (
+          <div key={i} className="stat-card" onClick={() => setActiveModal(s)}>
+            <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", borderRadius: "4px 0 0 4px", background: s.barColor }} />
+            <div className="stat-val" style={{ color: s.color }}>{s.val}</div>
+            <div className="stat-label" style={{ whiteSpace: "pre-line" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="section-label">Aplikasi Terkini</div>
+      {totalBulan.slice(0, 8).map((a, i) => (
+        <div key={i} className="recent-item" onClick={() => onSelectAplikasi(a)}>
+          <div className="avatar-circle">{a.name[0]}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>{a.name}</div>
+            <div style={{ fontSize: 11, color: "var(--gray-500)" }}>{a.prod} · {a.id} · {a.tgl}</div>
+          </div>
+          <span className={`badge ${a.status === "selesai" ? "badge-green" : a.status === "butuh_rm" ? "badge-blue" : "badge-amber"}`}>
+            {a.status === "selesai" ? "Selesai" : a.status === "butuh_rm" ? "Butuh RM" : "Pending BM"}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Generate5CScreen({ onNavigate, onGenerated }) {
+  const currentUser = useContext(UserContext);
+  const defaultCabang = currentUser.branches[0];
+  const NAMES = ["Andi Pratama", "Dedi Kurniawan", "Sinta Dewi", "Agung Saputra", "Mega Puspita", "Riko Firmansyah", "Lia Andriani", "Bayu Nugroho", "Fitri Rahayu", "Wahyu Santoso"];
+  const ENGINES = ["REGULER 1", "REGULER 2", "APPROVE 1", "APPROVE 2", "REJECT 1"];
+  const [form, setForm] = useState(() => ({
+    name: NAMES[Math.floor(Math.random() * NAMES.length)],
+    appId: randAPP(), mid: randMID(), cabang: defaultCabang,
+    engine: "REGULER 1", produk: PRODUK_LIST[0], tgl: new Date().toISOString().split("T")[0]
+  }));
+  const set = k => v => setForm(f => ({ ...f, [k]: v }));
+  const [step, setStep] = useState(null);
+  const STEPS = ["Membaca data konsumen dari ONE ME", "Kalkulasi DSR dan kapasitas kredit", "Generating Form 5C Digital"];
+  useEffect(() => {
+    if (step !== null && step < STEPS.length) {
+      const t = setTimeout(() => setStep(s => s + 1), 900);
+      return () => clearTimeout(t);
+    }
+  }, [step]);
+  const done = step !== null && step >= STEPS.length;
+
+  // Simulate a realistic generated aplikasi matching the full DB structure
+  function buildGeneratedAplikasi() {
+    const dsr = 28 + Math.floor(Math.random() * 15);
+    const penghasilan = 8000000 + Math.floor(Math.random() * 12000000);
+    const angsuran = Math.round(penghasilan * dsr / 100);
+    const ph = Math.round(penghasilan * 20);
+    const cmoList = ["Susi Susanti", "Agus Prabowo", "Rina Kartika", "Doni Hermawan", "Benny Tan"];
+    const cmo = cmoList[Math.floor(Math.random() * cmoList.length)];
+    return {
+      id: form.appId, mid: form.mid,
+      name: form.name || "Konsumen Baru",
+      prod: form.produk, cabang: form.cabang,
+      status: "menunggu_bm", tgl: form.tgl,
+      cmo, engine: form.engine, ph,
+      karakter: {
+        survey: "Baik - Rumah milik sendiri, konsumen kooperatif, tidak ada indikasi konsumen atas nama/fiktif",
+        histori_ybs: "Data SLIK diambil dari ONE ME — tidak ada catatan tunggak",
+        histori_pasangan: "-",
+        jejak: "Tidak ada tag negatif di GetContact, profil media sosial bersih",
+        lainnya_char: "-"
+      },
+      colateral: {
+        kesesuaian: "Sesuai dengan profil konsumen berdasarkan data ONE ME",
+        dp_otr: "DP sesuai ketentuan, tidak ada indikasi upping",
+        unit: "-",
+        bpkb: "an. " + (form.name || "Konsumen Baru"),
+        lainnya_col: "-"
+      },
+      kapasitas: {
+        dsr, total_angsuran: angsuran, total_penghasilan: penghasilan,
+        lama_kerja: "Data dari ONE ME — Karyawan Tetap",
+        fasilitas_aktif: { ybs: 1, pasangan: 0 },
+        slik_ybs: "Data SLIK diambil otomatis dari ONE ME",
+        slik_pasangan: "-",
+        fasilitas_besar: { ybs: 1, pasangan: 0 },
+        slik_besar_ybs: "Data SLIK diambil otomatis dari ONE ME",
+        slik_besar_pasangan: "-",
+        pernah_restruktur: "Tidak pernah",
+        pendapatan_lain: "-",
+        lainnya_cap: "-",
+        saldo: {
+          kredit: Math.round(penghasilan * 1.2),
+          debit: Math.round(penghasilan * 1.05),
+          avg: Math.round(penghasilan * 0.6),
+          akhir: Math.round(penghasilan * 0.5)
+        }
+      },
+      kondisi: {
+        sektor: "Tidak Berisiko Tinggi",
+        sektor_desc: "Data sektor pekerjaan diambil dari ONE ME — stabil",
+        pekerjaan: "Tidak Berisiko Tinggi",
+        status_kerja: "Karyawan Tetap",
+        usaha_lain: "-",
+        lainnya_cond: "-"
+      },
+      modal: {
+        rumah: "Data kepemilikan dari ONE ME",
+        kendaraan: "-",
+        sumber_dana: "Gaji bulanan",
+        lainnya_modal: "-"
+      },
+      kesimpulan: `1. DSR ${dsr}% ${dsr <= 33 ? "sangat aman" : dsr <= 40 ? "dalam batas aman" : "melebihi batas, perlu perhatian"}\n2. Data SLIK dan mutasi rekening sudah diverifikasi dari ONE ME\n3. Karakter konsumen baik berdasarkan jejak digital`,
+      rekomendasi: dsr <= 40 ? "SETUJU" : "PERTIMBANGAN KHUSUS",
+      bm_setuju: null,
+      rm_required: form.engine === "APPROVE 1" || form.engine === "APPROVE 2"
+    };
+  }
+
+  if (step !== null) return (
+    <div className="page">
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ fontSize: 20, fontWeight: 800 }} className="page-header">Generate Form 5C</div>
+        <div style={{ fontSize: 12, color: "var(--gray-500)", marginTop: 3 }}>AI sedang memproses data konsumen</div>
+      </div>
+      <div className="card" style={{ display: "flex", gap: 14, alignItems: "center" }}>
+        <div style={{ width: 44, height: 44, borderRadius: "var(--radius-md)", background: "var(--blue-100)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, color: "var(--blue-600)", flexShrink: 0 }}>5C</div>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 600 }}>{form.name || "Konsumen Baru"}</div>
+          <div style={{ fontSize: 11, color: "var(--gray-500)" }}>{form.appId} · {form.produk} · {form.cabang}</div>
+        </div>
+      </div>
+      <div className="card">
+        <div className="section-label">Proses Generate AI</div>
+        {STEPS.map((s, i) => (
+          <div key={i} className="step-row">
+            <div className={`step-dot ${i < step ? "done" : i === step ? "active" : "pending"}`}>{i < step ? "✓" : i + 1}</div>
+            <div className={`step-text ${i < step ? "done" : ""}`}>{s}</div>
+          </div>
+        ))}
+      </div>
+      {done && (
+        <>
+          <div style={{ background: "var(--green-100)", border: "1px solid #a7f3d0", borderRadius: "var(--radius-md)", padding: 14, marginBottom: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--green-600)" }}>✓ FORM 5C BERHASIL DIGENERATE</div>
+            <div style={{ fontSize: 12, color: "var(--gray-600)", marginTop: 4 }}>Form 5C Digital siap untuk direview dan disetujui oleh BM.</div>
+          </div>
+          <button className="btn-primary" onClick={() => onGenerated && onGenerated(buildGeneratedAplikasi())}>
+            Lihat dan Approve form 5C
+          </button>
+        </>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="page">
+      <div style={{ marginBottom: 22 }}>
+        <div style={{ fontSize: 20, fontWeight: 800 }} className="page-header">Generate Form 5C</div>
+        <div style={{ fontSize: 12, color: "var(--gray-500)", marginTop: 3 }}>Input data akan diambil otomatis dari ONE ME</div>
+      </div>
+      <div className="card">
+        <div className="section-label">Data Aplikasi (dari ONE ME)</div>
+        <div className="field"><label>Nama Konsumen</label><input value={form.name} onChange={e => set("name")(e.target.value)} placeholder="Masukkan nama konsumen" /></div>
+        <div className="grid-2">
+          <div className="field"><label>APP ID</label><input value={form.appId} onChange={e => set("appId")(e.target.value)} placeholder="5xxxxxxx" /></div>
+          <div className="field"><label>MID</label><input value={form.mid} onChange={e => set("mid")(e.target.value)} placeholder="7xxxxxxx" /></div>
+        </div>
+        <div className="field"><label>Tanggal Pengajuan</label><input type="date" value={form.tgl} onChange={e => set("tgl")(e.target.value)} /></div>
+        <div className="grid-2">
+          <div className="field"><label>Produk</label>
+            <select value={form.produk} onChange={e => set("produk")(e.target.value)}>
+              {PRODUK_LIST.map(p => <option key={p}>{p}</option>)}
+            </select>
+          </div>
+          <div className="field"><label>Engine Scoring</label>
+            <select value={form.engine} onChange={e => set("engine")(e.target.value)}>
+              {ENGINES.map(e => <option key={e}>{e}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="field"><label>Cabang</label>
+          {currentUser.branches.length > 1 ? (
+            <select value={form.cabang} onChange={e => set("cabang")(e.target.value)}>
+              {currentUser.branches.map(b => <option key={b}>{b}</option>)}
+            </select>
+          ) : <input value={form.cabang} readOnly style={{ background: "var(--gray-100)" }} />}
+        </div>
+      </div>
+      <div style={{ background: "var(--blue-50)", border: "1px solid var(--blue-100)", borderRadius: "var(--radius-md)", padding: 12, marginBottom: 16 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "var(--blue-700)" }}>Data akan diambil otomatis dari ONE ME</div>
+        <div style={{ fontSize: 11, color: "var(--gray-600)", marginTop: 4 }}>SLIK, mutasi rekening, histori kredit, dan data konsumen akan dianalisis AI secara otomatis.</div>
+      </div>
+      <button className="btn-primary" onClick={() => setStep(0)}>
+        Generate Form 5C dengan AI
+      </button>
+    </div>
+  );
+}
+
+/* ================================================================
+   KIRIM 5C DIGITAL KE RM - hanya untuk engine REGULER 2
+   ================================================================ */
+function KirimRMSection() {
+  const [showPopup, setShowPopup] = useState(false);
+  const [sent, setSent] = useState(false);
+  return (
+    <>
+      {!sent ? (
+        <div className="card" style={{ borderColor: "var(--amber-500)", borderWidth: 2 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "var(--amber-600)", marginBottom: 6 }}>
+            ⚠ Engine REGULER 2 — Diperlukan Konfirmasi RM
+          </div>
+          <div style={{ fontSize: 11, color: "var(--gray-600)", marginBottom: 12 }}>Form 5C Digital perlu dikirimkan ke Regional Manager untuk ditinjau.</div>
+          <button className="btn-gold" style={{ marginTop: 0 }} onClick={() => setShowPopup(true)}>
+            📤 Kirim 5C Digital ke RM
+          </button>
+        </div>
+      ) : (
+        <div style={{ background: "var(--green-100)", border: "1px solid #a7f3d0", borderRadius: "var(--radius-md)", padding: 14, marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--green-600)" }}>✓ Form 5C Digital berhasil dikirim ke RM</div>
+        </div>
+      )}
+      {showPopup && (
+        <div className="modal-overlay" onClick={() => setShowPopup(false)}>
+          <div className="modal-panel" style={{ maxWidth: 380 }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div style={{ fontSize: 15, fontWeight: 800 }}>Kirim 5C Digital ke RM</div>
+              <button className="modal-close" onClick={() => setShowPopup(false)}>✕</button>
+            </div>
+            <div style={{ fontSize: 12, color: "var(--gray-600)", marginBottom: 20 }}>
+              Apakah Anda yakin ingin mengirim Form 5C Digital ini ke Regional Manager untuk review?
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button className="btn-primary" style={{ flex: 1, marginTop: 0 }} onClick={() => { setSent(true); setShowPopup(false); }}>
+                📤 Kirim
+              </button>
+              <button className="btn-outline" style={{ flex: 1, marginTop: 0 }} onClick={() => setShowPopup(false)}>
+                Kembali
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ================================================================
+   KIRIM 5C KE ONE ME - tombol final pengiriman
+   ================================================================ */
+function Kirim5COneMEButton({ aplikasi }) {
+  const [showPopup, setShowPopup] = useState(false);
+  const [done, setDone] = useState(false);
+  if (done) return (
+    <div style={{ background: "var(--green-100)", border: "1px solid #a7f3d0", borderRadius: "var(--radius-lg)", padding: 20, marginBottom: 16, textAlign: "center" }}>
+      <div style={{ fontSize: 18 }}>✅</div>
+      <div style={{ fontSize: 14, fontWeight: 800, color: "var(--green-600)", marginTop: 8 }}>Form 5C berhasil dikirim ke ONE ME</div>
+      <div style={{ fontSize: 12, color: "var(--gray-600)", marginTop: 4 }}>Aplikasi ini telah selesai dikerjakan.</div>
+    </div>
+  );
+  return (
+    <>
+      <button
+        onClick={() => setShowPopup(true)}
+        style={{
+          width: "100%", padding: 16, borderRadius: "var(--radius-md)", border: "none",
+          background: "linear-gradient(135deg, #003f88, #005baa)",
+          color: "#fff", fontSize: 15, fontWeight: 800, cursor: "pointer",
+          transition: "all 0.2s", marginBottom: 16, letterSpacing: 0.5,
+          boxShadow: "0 4px 16px rgba(0,63,136,0.3)"
+        }}
+        onMouseEnter={e => e.currentTarget.style.transform = "translateY(-1px)"}
+        onMouseLeave={e => e.currentTarget.style.transform = "none"}>
+        🚀 Kirim 5C ke ONE ME
+      </button>
+      {showPopup && (
+        <div className="modal-overlay" onClick={() => setShowPopup(false)}>
+          <div className="modal-panel" style={{ maxWidth: 380 }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div style={{ fontSize: 15, fontWeight: 800 }}>Kirim Form 5C ke ONE ME</div>
+              <button className="modal-close" onClick={() => setShowPopup(false)}>✕</button>
+            </div>
+            <div style={{ fontSize: 12, color: "var(--gray-600)", marginBottom: 6 }}>
+              Form 5C Digital untuk <strong>{aplikasi.name}</strong> ({aplikasi.id}) akan dikirim ke sistem ONE ME.
+            </div>
+            <div style={{ fontSize: 12, color: "var(--amber-600)", fontWeight: 600, marginBottom: 20 }}>
+              ⚠ Pastikan semua data sudah benar sebelum mengirim.
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button className="btn-primary" style={{ flex: 1, marginTop: 0 }} onClick={() => { setDone(true); setShowPopup(false); }}>
+                🚀 Kirim
+              </button>
+              <button className="btn-outline" style={{ flex: 1, marginTop: 0 }} onClick={() => setShowPopup(false)}>
+                Kembali
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ================================================================
+   FORM 5C SCREEN - Matches Excel Form Analisa Kredit structure
+   ================================================================ */
+function Form5CScreen({ aplikasi }) {
+  const currentUser = useContext(UserContext);
+  const [data, setData] = useState(() => JSON.parse(JSON.stringify(aplikasi || {})));
+
+  const a = data;
+  if (!aplikasi) return (
+    <div className="page">
+      <div className="card" style={{ textAlign: "center", padding: 40, color: "var(--gray-400)" }}>
+        <div style={{ fontSize: 40, marginBottom: 12 }}>📋</div>
+        <div style={{ fontSize: 14, fontWeight: 600 }}>Belum ada aplikasi dipilih</div>
+        <div style={{ fontSize: 12, marginTop: 4 }}>Pilih aplikasi dari Dashboard atau generate baru</div>
+      </div>
+    </div>
+  );
+
+  function updateField(path, value) {
+    setData(prev => {
+      const next = JSON.parse(JSON.stringify(prev));
+      const keys = path.split(".");
+      let obj = next;
+      for (let i = 0; i < keys.length - 1; i++) obj = obj[keys[i]];
+      obj[keys[keys.length - 1]] = value;
+      return next;
+    });
+  }
+
+  const dsrColor = a.kapasitas.dsr > 40 ? "var(--red-500)" : a.kapasitas.dsr > 33 ? "var(--amber-500)" : "var(--green-500)";
+
+  return (
+    <div>
+      {/* Sticky header */}
+      <div style={{ padding: "16px 20px 0", background: "var(--white)", borderBottom: "1px solid var(--gray-200)", position: "sticky", top: 0, zIndex: 10 }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+            <div>
+              <div style={{ fontSize: 18, fontWeight: 800 }}>Form 5C Digital</div>
+              <div style={{ fontSize: 11, color: "var(--gray-500)" }}>{a.name} · {a.id} · {a.cabang}</div>
+            </div>
+            <span className="badge badge-blue">{a.engine}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="page" style={{ paddingTop: 18 }}>
+        {/* HEADER CARD - matching Excel header */}
+        <div className="c5-header">
+          <div className="c5-header-row">
+            <div>
+              <div className="c5-header-title">FORM ANALISA KREDIT</div>
+              <div className="c5-header-sub">PT BCA Finance · {a.cabang}</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div className="c5-header-meta">Tanggal Pengajuan: <strong>{a.tgl}</strong></div>
+              <div className="c5-header-meta">APP ID: <strong>{a.id}</strong></div>
+              <div className="c5-header-meta">Engine: <strong>{a.engine}</strong></div>
+            </div>
+          </div>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.15)", marginTop: 12, paddingTop: 10, display: "flex", gap: 24, flexWrap: "wrap" }}>
+            {[["Cabang", a.cabang], ["Nama CMO", a.cmo], ["Nama Konsumen", a.name], ["Produk", a.prod], ["PH", formatRp(a.ph)]].map(([l,v]) => (
+              <div key={l}>
+                <div className="c5-header-meta">{l}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* TAB: 5C ANALISA - Following Excel structure exactly */}
+        <>
+            {/* ====== 1. CHARACTER ====== */}
+            <div className="card">
+              <div className="c5-section">
+                <div className="c5-section-title">1. Character (Karakter)</div>
+              </div>
+
+              {/* Hasil Survey */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Hasil Survey</div>
+                  <div className="parameter-desc">Kondisi rumah, karakter konsumen, kondisi usaha/pekerjaan, indikasi konsumen atas nama/fiktif</div>
+                  <EditableField value={a.karakter.survey} onChange={v => updateField("karakter.survey", v)} multiline />
+                </div>
+              </div>
+
+              {/* History Kredit */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">History Kredit</div>
+                  <div className="parameter-desc">Pernah menunggak, frekuensi menunggak, WO, dll</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 8 }}>
+                    <div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "var(--gray-500)", textTransform: "uppercase", marginBottom: 4 }}>YBS</div>
+                      <EditableField value={a.karakter.histori_ybs} onChange={v => updateField("karakter.histori_ybs", v)} multiline />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "var(--gray-500)", textTransform: "uppercase", marginBottom: 4 }}>Pasangan</div>
+                      <EditableField value={a.karakter.histori_pasangan} onChange={v => updateField("karakter.histori_pasangan", v)} multiline />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Jejak Digital */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Informasi Jejak Digital</div>
+                  <div className="parameter-desc">Analisa profile dari social media, tag negatif di GetContact, ECN, komunitas</div>
+                  <EditableField value={a.karakter.jejak} onChange={v => updateField("karakter.jejak", v)} multiline />
+                </div>
+              </div>
+
+              {/* Lainnya */}
+              <div className="parameter-row" style={{ borderBottom: "none" }}>
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Lainnya</div>
+                  <div className="parameter-desc">Informasi tambahan lainnya</div>
+                  <EditableField value={a.karakter.lainnya_char} onChange={v => updateField("karakter.lainnya_char", v)} />
+                </div>
+              </div>
+            </div>
+
+            {/* ====== 2. COLATERAL ====== */}
+            <div className="card">
+              <div className="c5-section">
+                <div className="c5-section-title">2. Colateral (Jaminan)</div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Kesesuaian Profil Konsumen dengan Kendaraan</div>
+                  <div className="parameter-desc">Apakah kendaraan yang diambil sesuai dengan profil konsumen</div>
+                  <EditableField value={a.colateral.kesesuaian} onChange={v => updateField("colateral.kesesuaian", v)} multiline />
+                </div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">% DP / OTR</div>
+                  <div className="parameter-desc">Apakah DP dan OTR sesuai (tidak ada indikasi upping, dll)</div>
+                  <EditableField value={a.colateral.dp_otr} onChange={v => updateField("colateral.dp_otr", v)} multiline />
+                </div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div>
+                      <div className="parameter-label">Unit</div>
+                      <EditableField value={a.colateral.unit} onChange={v => updateField("colateral.unit", v)} />
+                    </div>
+                    <div>
+                      <div className="parameter-label">BPKB an.</div>
+                      <EditableField value={a.colateral.bpkb} onChange={v => updateField("colateral.bpkb", v)} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="parameter-row" style={{ borderBottom: "none" }}>
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Lainnya</div>
+                  <EditableField value={a.colateral.lainnya_col} onChange={v => updateField("colateral.lainnya_col", v)} />
+                </div>
+              </div>
+            </div>
+
+            {/* ====== 3. CAPACITY ====== */}
+            <div className="card">
+              <div className="c5-section">
+                <div className="c5-section-title">3. Capacity (Kapasitas)</div>
+              </div>
+
+              {/* DSR */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">DSR (Debt Service Ratio)</div>
+                  <div className="parameter-desc">Rasio total angsuran terhadap total pendapatan</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 8 }}>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: dsrColor }}>{a.kapasitas.dsr}%</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 11, color: "var(--gray-500)" }}>
+                        Total Angsuran: <strong>{formatRp(a.kapasitas.total_angsuran)}</strong> / Total Penghasilan: <strong>{formatRp(a.kapasitas.total_penghasilan)}</strong>
+                      </div>
+                      <div className="dsr-bar" style={{ marginTop: 6 }}><div className="dsr-fill" style={{ width: Math.min(a.kapasitas.dsr, 100) + "%", background: dsrColor }} /></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lama Bekerja */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Lama Bekerja</div>
+                  <div className="parameter-desc">Lama konsumen bekerja</div>
+                  <EditableField value={a.kapasitas.lama_kerja} onChange={v => updateField("kapasitas.lama_kerja", v)} />
+                </div>
+              </div>
+
+              {/* Jumlah fasilitas kredit aktif (SLIK) */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Jumlah Fasilitas Kredit Aktif (SLIK)</div>
+                  <div className="parameter-desc">Total fasilitas kredit yang sedang berjalan beserta jumlah outstandingnya</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 8 }}>
+                    <div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "var(--gray-500)", textTransform: "uppercase", marginBottom: 4 }}>YBS ({a.kapasitas.fasilitas_aktif.ybs})</div>
+                      <EditableField value={a.kapasitas.slik_ybs} onChange={v => updateField("kapasitas.slik_ybs", v)} multiline />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "var(--gray-500)", textTransform: "uppercase", marginBottom: 4 }}>Pasangan ({a.kapasitas.fasilitas_aktif.pasangan})</div>
+                      <EditableField value={a.kapasitas.slik_pasangan} onChange={v => updateField("kapasitas.slik_pasangan", v)} multiline />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Jumlah fasilitas > 5 Juta */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Jumlah Fasilitas Kredit Aktif (SLIK) &gt; 5 Juta</div>
+                  <div className="parameter-desc">Total fasilitas kredit berjalan dengan outstanding lebih dari 5 Juta</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 8 }}>
+                    <div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "var(--gray-500)", textTransform: "uppercase", marginBottom: 4 }}>YBS ({a.kapasitas.fasilitas_besar.ybs})</div>
+                      <EditableField value={a.kapasitas.slik_besar_ybs} onChange={v => updateField("kapasitas.slik_besar_ybs", v)} multiline />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "var(--gray-500)", textTransform: "uppercase", marginBottom: 4 }}>Pasangan ({a.kapasitas.fasilitas_besar.pasangan})</div>
+                      <EditableField value={a.kapasitas.slik_besar_pasangan} onChange={v => updateField("kapasitas.slik_besar_pasangan", v)} multiline />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pernah Restruktur */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Pernah Restruktur (SLIK)</div>
+                  <div className="parameter-desc">Pernah/tidak pernah direstruktur pinjamannya selama 24 bulan terakhir</div>
+                  <EditableField value={a.kapasitas.pernah_restruktur} onChange={v => updateField("kapasitas.pernah_restruktur", v)} />
+                </div>
+              </div>
+
+              {/* Pendapatan Lainnya */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Pendapatan Konsumen Lainnya</div>
+                  <div className="parameter-desc">Pendapatan dari usaha/pekerjaan lainnya</div>
+                  <EditableField value={a.kapasitas.pendapatan_lain} onChange={v => updateField("kapasitas.pendapatan_lain", v)} />
+                </div>
+              </div>
+
+              {/* Lainnya */}
+              <div className="parameter-row" style={{ borderBottom: "none" }}>
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Lainnya</div>
+                  <EditableField value={a.kapasitas.lainnya_cap} onChange={v => updateField("kapasitas.lainnya_cap", v)} />
+                </div>
+              </div>
+            </div>
+
+            {/* ====== 4. CAPITAL ====== */}
+            <div className="card">
+              <div className="c5-section">
+                <div className="c5-section-title">4. Capital (Modal)</div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Kepemilikan Rumah dan Bukti</div>
+                  <div className="parameter-desc">Rumah milik sendiri, kontrak, dll</div>
+                  <EditableField value={a.modal.rumah} onChange={v => updateField("modal.rumah", v)} />
+                </div>
+              </div>
+
+              {/* Rata-rata saldo mengendap */}
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Rata-rata Saldo Mengendap</div>
+                  <div className="parameter-desc">Perhitungan rata-rata saldo mengendap minimal 3 bulan terakhir</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 8 }}>
+                    {[["Kredit", formatRp(a.kapasitas.saldo.kredit)], ["Debit", formatRp(a.kapasitas.saldo.debit)], ["Rata-rata Saldo Mengendap", formatRp(a.kapasitas.saldo.avg)], ["Saldo di Bulan Terakhir", formatRp(a.kapasitas.saldo.akhir)]].map(([l, v]) => (
+                      <div key={l} style={{ padding: "8px 10px", background: "var(--gray-50)", borderRadius: "var(--radius-sm)", border: "1px solid var(--gray-100)" }}>
+                        <div style={{ fontSize: 10, color: "var(--gray-500)", fontWeight: 700, textTransform: "uppercase" }}>{l}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, marginTop: 2 }}>{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Kepemilikan Kendaraan Lainnya</div>
+                  <div className="parameter-desc">Konsumen memiliki kendaraan lain / tidak, termasuk status kepemilikan</div>
+                  <EditableField value={a.modal.kendaraan} onChange={v => updateField("modal.kendaraan", v)} />
+                </div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Sumber Dana</div>
+                  <div className="parameter-desc">Informasi sumber dana pembayaran angsuran</div>
+                  <EditableField value={a.modal.sumber_dana} onChange={v => updateField("modal.sumber_dana", v)} />
+                </div>
+              </div>
+
+              <div className="parameter-row" style={{ borderBottom: "none" }}>
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Lainnya</div>
+                  <EditableField value={a.modal.lainnya_modal} onChange={v => updateField("modal.lainnya_modal", v)} />
+                </div>
+              </div>
+            </div>
+
+            {/* ====== 5. CONDITION ====== */}
+            <div className="card">
+              <div className="c5-section">
+                <div className="c5-section-title">5. Condition (Kondisi)</div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Sektor Ekonomi (Berisiko / Tidak)</div>
+                  <div className="parameter-desc">Penilaian apakah sektor ekonomi tempat konsumen bekerja tergolong risiko tinggi</div>
+                  <EditableField value={a.kondisi.sektor + " — " + a.kondisi.sektor_desc} onChange={v => updateField("kondisi.sektor_desc", v)} multiline />
+                </div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Pekerjaan</div>
+                  <div className="parameter-desc">Pekerjaan/profesi konsumen dan apakah berisiko tinggi / tidak</div>
+                  <EditableField value={a.kondisi.pekerjaan + " — " + a.kondisi.status_kerja} onChange={v => updateField("kondisi.status_kerja", v)} multiline />
+                </div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Status Kerja</div>
+                  <div className="parameter-desc">Status kepegawaian (tetap, kontrak, harian lepas, pemilik usaha, dll)</div>
+                  <EditableField value={a.kondisi.status_kerja} onChange={v => updateField("kondisi.status_kerja", v)} />
+                </div>
+              </div>
+
+              <div className="parameter-row">
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Pekerja dan/atau Usaha Lainnya</div>
+                  <div className="parameter-desc">Informasi jika konsumen memiliki usaha atau pekerjaan sampingan</div>
+                  <EditableField value={a.kondisi.usaha_lain} onChange={v => updateField("kondisi.usaha_lain", v)} />
+                </div>
+              </div>
+
+              <div className="parameter-row" style={{ borderBottom: "none" }}>
+                <div style={{ flex: 1 }}>
+                  <div className="parameter-label">Lainnya</div>
+                  <EditableField value={a.kondisi.lainnya_cond} onChange={v => updateField("kondisi.lainnya_cond", v)} />
+                </div>
+              </div>
+            </div>
+
+            {/* ====== KESIMPULAN ====== */}
+            <div className="card" style={{ borderColor: "var(--blue-200)" }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "var(--blue-700)", marginBottom: 8, textTransform: "uppercase" }}>
+                Kesimpulan Hasil Analisa
+              </div>
+              <EditableField value={a.kesimpulan} onChange={v => updateField("kesimpulan", v)} multiline />
+            </div>
+
+            {/* ====== REKOMENDASI ====== */}
+            <div className="card" style={{ borderColor: a.rekomendasi.includes("SETUJU") && !a.rekomendasi.includes("TIDAK") ? "#a7f3d0" : "#fde68a" }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: a.rekomendasi.includes("SETUJU") && !a.rekomendasi.includes("TIDAK") ? "var(--green-600)" : "var(--amber-600)", marginBottom: 8, textTransform: "uppercase" }}>
+                Rekomendasi Akhir BM
+              </div>
+              <EditableField value={a.rekomendasi} onChange={v => updateField("rekomendasi", v)} />
+            </div>
+
+            {/* KIRIM KE RM - hanya muncul jika engine = REGULER 2 */}
+            {a.engine && a.engine.toUpperCase() === "REGULER 2" && (
+              <KirimRMSection />
+            )}
+
+            {/* KIRIM 5C KE ONE ME - tombol final */}
+            <Kirim5COneMEButton aplikasi={a} />
+        </>
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   MAIN APP SHELL
+   ================================================================ */
+function App() {
+  const [screen, setScreen] = useState("login");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(TEAM_USERS[0]);
+  const [selectedAplikasi, setSelectedAplikasi] = useState(null);
+
+  const NAV = [
+    { id: "dashboard", label: "Dashboard", letter: "D" },
+    { id: "generate", label: "Generate", letter: "G" },
+  ];
+
+  const activeNav = screen === "form5c" ? "dashboard" : screen;
+
+  function handleLogin() {
+    const usr = TEAM_USERS[Math.floor(Math.random() * TEAM_USERS.length)];
+    setCurrentUser(usr);
+    setLoggedIn(true);
+    setScreen("dashboard");
+  }
+
+  function handleSelectAplikasi(a) {
+    setSelectedAplikasi(a);
+    setScreen("form5c");
+  }
+
+  function handleGenerated(generatedAplikasi) {
+    if (generatedAplikasi) {
+      setSelectedAplikasi(generatedAplikasi);
+      setScreen("form5c");
+    } else {
+      setScreen("dashboard");
+    }
+  }
+
+  function handleLogout() {
+    setLoggedIn(false);
+    setScreen("login");
+    setSelectedAplikasi(null);
+  }
+
+  if (!loggedIn) return <LoginScreen onLogin={handleLogin} />;
+
+  return (
+    <UserContext.Provider value={currentUser}>
+      <div className={`app-shell ${loggedIn ? "logged-in" : ""}`}>
+        {/* SIDEBAR - Desktop */}
+        <div className="sidebar">
+          <div className="brand">
+            <div className="brand-icon">5C</div>
+            <div>
+              <div className="brand-text" style={{ fontSize: 15, lineHeight: 1.2 }}>5C Digital Credit Summary</div>
+              <div className="brand-sub">By Tim Optima</div>
+            </div>
+          </div>
+          <div className="sidebar-nav">
+            {NAV.map(n => (
+              <button key={n.id} className={activeNav === n.id ? "active" : ""} onClick={() => { setScreen(n.id); if (n.id === "dashboard") setSelectedAplikasi(null); }}>
+                <div className="nav-icon">{n.letter}</div>
+                {n.label}
+              </button>
+            ))}
+          </div>
+          <div className="sidebar-user" style={{ flexDirection: "column", alignItems: "stretch", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div className="avatar">{currentUser.name[0]}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="uname">{currentUser.name}</div>
+                <div className="ubranch">{currentUser.role} · {currentUser.branches[0]}</div>
+              </div>
+            </div>
+            <button onClick={handleLogout} style={{ width: "100%", padding: "8px 12px", borderRadius: "var(--radius-sm)", border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.7)", fontSize: 11, fontWeight: 600, cursor: "pointer", transition: "all 0.2s", textAlign: "center" }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}>
+              Logout
+            </button>
+          </div>
+        </div>
+
+        {/* TOPBAR - Mobile */}
+        <div className="topbar-mobile">
+          <div className="brand-row">
+            <div className="brand-icon-sm">5C</div>
+            <div className="brand-label">5C</div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span className="status-dot" />
+              <span className="status-text">Online</span>
+            </div>
+            <button onClick={handleLogout} style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 6, color: "#fff", fontSize: 10, fontWeight: 600, padding: "5px 10px", cursor: "pointer" }}>Logout</button>
+          </div>
+        </div>
+
+        {/* MAIN CONTENT */}
+        <div className="main-content">
+          {screen === "dashboard" && <DashboardScreen onSelectAplikasi={handleSelectAplikasi} />}
+          {screen === "generate" && <Generate5CScreen onNavigate={setScreen} onGenerated={handleGenerated} />}
+          {screen === "form5c" && <Form5CScreen aplikasi={selectedAplikasi} />}
+        </div>
+
+        {/* BOTTOM NAV - Mobile */}
+        <div className="bottom-nav">
+          {NAV.map(n => (
+            <button key={n.id} className={activeNav === n.id ? "active" : ""} onClick={() => { setScreen(n.id); if (n.id === "dashboard") setSelectedAplikasi(null); }}>
+              <div className="nav-dot">{n.letter}</div>
+              <div className="nav-label">{n.label}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </UserContext.Provider>
+  );
+}
+
+const root = createRoot(document.getElementById('root'));
+root.render(<StrictMode><App /></StrictMode>);
+</script>
+</body>
+</html>
