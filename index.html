@@ -1126,106 +1126,67 @@ function DashboardScreen({ onSelectAplikasi }) {
 
 function Generate5CScreen({ onNavigate, onGenerated }) {
   const currentUser = useContext(UserContext);
-  const defaultCabang = currentUser.branches[0];
-  const NAMES = ["Andi Pratama", "Dedi Kurniawan", "Sinta Dewi", "Agung Saputra", "Mega Puspita", "Riko Firmansyah", "Lia Andriani", "Bayu Nugroho", "Fitri Rahayu", "Wahyu Santoso"];
-  const ENGINES = ["REGULER 1", "REGULER 2", "APPROVE 1", "APPROVE 2", "REJECT 1"];
-  const [form, setForm] = useState(() => ({
-    name: NAMES[Math.floor(Math.random() * NAMES.length)],
-    appId: randAPP(), mid: randMID(), cabang: defaultCabang,
-    engine: "REGULER 1", produk: PRODUK_LIST[0], tgl: new Date().toISOString().split("T")[0]
-  }));
-  const set = k => v => setForm(f => ({ ...f, [k]: v }));
+  const [appId, setAppId] = useState("");
+  const [mid, setMid] = useState("");
   const [step, setStep] = useState(null);
-  const STEPS = ["Membaca data konsumen dari ONE ME", "Kalkulasi DSR dan kapasitas kredit", "Generating Form 5C Digital"];
+  const [foundData, setFoundData] = useState(null);
+  const [error, setError] = useState("");
+
+  const STEPS = [
+    "Mencari data konsumen di ONE ME",
+    "Membaca SLIK & mutasi rekening",
+    "Analisa naratif per pilar 5C",
+    "Cross-check & validasi data",
+    "Generating Form 5C Digital"
+  ];
+
   useEffect(() => {
     if (step !== null && step < STEPS.length) {
-      const t = setTimeout(() => setStep(s => s + 1), 900);
+      const t = setTimeout(() => setStep(s => s + 1), 800);
       return () => clearTimeout(t);
     }
   }, [step]);
   const done = step !== null && step >= STEPS.length;
 
-  // Simulate a realistic generated aplikasi matching the full DB structure
-  function buildGeneratedAplikasi() {
-    const dsr = 28 + Math.floor(Math.random() * 15);
-    const penghasilan = 8000000 + Math.floor(Math.random() * 12000000);
-    const angsuran = Math.round(penghasilan * dsr / 100);
-    const ph = Math.round(penghasilan * 20);
-    const cmoList = ["Susi Susanti", "Agus Prabowo", "Rina Kartika", "Doni Hermawan", "Benny Tan"];
-    const cmo = cmoList[Math.floor(Math.random() * cmoList.length)];
-    return {
-      id: form.appId, mid: form.mid,
-      name: form.name || "Konsumen Baru",
-      prod: form.produk, cabang: form.cabang,
-      status: "menunggu_bm", tgl: form.tgl,
-      cmo, engine: form.engine, ph,
-      karakter: {
-        survey: "Baik - Rumah milik sendiri, konsumen kooperatif, tidak ada indikasi konsumen atas nama/fiktif",
-        histori_ybs: "Data SLIK diambil dari ONE ME — tidak ada catatan tunggak",
-        histori_pasangan: "-",
-        jejak: "Tidak ada tag negatif di GetContact, profil media sosial bersih",
-        lainnya_char: "-"
-      },
-      colateral: {
-        kesesuaian: "Sesuai dengan profil konsumen berdasarkan data ONE ME",
-        dp_otr: "DP sesuai ketentuan, tidak ada indikasi upping",
-        unit: "-",
-        bpkb: "an. " + (form.name || "Konsumen Baru"),
-        lainnya_col: "-"
-      },
-      kapasitas: {
-        dsr, total_angsuran: angsuran, total_penghasilan: penghasilan,
-        lama_kerja: "Data dari ONE ME — Karyawan Tetap",
-        fasilitas_aktif: { ybs: 1, pasangan: 0 },
-        slik_ybs: "Data SLIK diambil otomatis dari ONE ME",
-        slik_pasangan: "-",
-        fasilitas_besar: { ybs: 1, pasangan: 0 },
-        slik_besar_ybs: "Data SLIK diambil otomatis dari ONE ME",
-        slik_besar_pasangan: "-",
-        pernah_restruktur: "Tidak pernah",
-        pendapatan_lain: "-",
-        lainnya_cap: "-",
-        saldo: {
-          kredit: Math.round(penghasilan * 1.2),
-          debit: Math.round(penghasilan * 1.05),
-          avg: Math.round(penghasilan * 0.6),
-          akhir: Math.round(penghasilan * 0.5)
-        }
-      },
-      kondisi: {
-        sektor: "Tidak Berisiko Tinggi",
-        sektor_desc: "Data sektor pekerjaan diambil dari ONE ME — stabil",
-        pekerjaan: "Tidak Berisiko Tinggi",
-        status_kerja: "Karyawan Tetap",
-        usaha_lain: "-",
-        lainnya_cond: "-"
-      },
-      modal: {
-        rumah: "Data kepemilikan dari ONE ME",
-        kendaraan: "-",
-        sumber_dana: "Gaji bulanan",
-        lainnya_modal: "-"
-      },
-      kesimpulan: `1. DSR ${dsr}% ${dsr <= 33 ? "sangat aman" : dsr <= 40 ? "dalam batas aman" : "melebihi batas, perlu perhatian"}\n2. Data SLIK dan mutasi rekening sudah diverifikasi dari ONE ME\n3. Karakter konsumen baik berdasarkan jejak digital`,
-      rekomendasi: dsr <= 40 ? "SETUJU" : "PERTIMBANGAN KHUSUS",
-      bm_setuju: null,
-      rm_required: form.engine === "APPROVE 1" || form.engine === "APPROVE 2"
-    };
+  const canGenerate = appId.length >= 7 || mid.length >= 7;
+
+  function handleGenerate() {
+    setError("");
+    if (!canGenerate) {
+      setError("Masukkan minimal 7 digit pada APP ID atau MID.");
+      return;
+    }
+    // Pull a random applicant from the "ONE ME" database to simulate data retrieval
+    const allBranches = ["Direct Sales Batam", "Direct Sales Pontianak", "WTC Mobil Bekas I", "Direct Sales Tangerang II", "Direct Sales Cilegon"];
+    const pool = buildAplikasiDB(allBranches);
+    if (pool.length === 0) return;
+    const picked = pool[Math.floor(Math.random() * pool.length)];
+    // Override the id/mid with what the user typed, keep all other data fixed from "ONE ME"
+    const result = JSON.parse(JSON.stringify(picked));
+    result.id = appId || picked.id;
+    result.mid = mid || picked.mid;
+    result.status = "menunggu_bm";
+    result.bm_setuju = null;
+    setFoundData(result);
+    setStep(0);
   }
 
+  // --- PROCESSING / LOADING SCREEN ---
   if (step !== null) return (
     <div className="page">
       <div style={{ marginBottom: 22 }}>
         <div style={{ fontSize: 20, fontWeight: 800 }} className="page-header">Generate Form 5C</div>
-        <div style={{ fontSize: 12, color: "var(--gray-500)", marginTop: 3 }}>AI sedang memproses data konsumen</div>
+        <div style={{ fontSize: 12, color: "var(--gray-500)", marginTop: 3 }}>AI sedang memproses data konsumen dari ONE ME</div>
       </div>
-      <div className="card" style={{ display: "flex", gap: 14, alignItems: "center" }}>
-        <div style={{ width: 44, height: 44, borderRadius: "var(--radius-md)", background: "var(--blue-100)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, color: "var(--blue-600)", flexShrink: 0 }}>5C</div>
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 600 }}>{form.name || "Konsumen Baru"}</div>
-          <div style={{ fontSize: 11, color: "var(--gray-500)" }}>{form.appId} · {form.produk} · {form.cabang}</div>
+      {foundData && (
+        <div className="card" style={{ display: "flex", gap: 14, alignItems: "center" }}>
+          <div style={{ width: 44, height: 44, borderRadius: "var(--radius-md)", background: "var(--blue-100)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, color: "var(--blue-600)", flexShrink: 0 }}>5C</div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>{foundData.name}</div>
+            <div style={{ fontSize: 11, color: "var(--gray-500)" }}>{foundData.id} · {foundData.prod} · {foundData.cabang}</div>
+          </div>
         </div>
-      </div>
+      )}
       <div className="card">
         <div className="section-label">Proses Generate AI</div>
         {STEPS.map((s, i) => (
@@ -1239,56 +1200,71 @@ function Generate5CScreen({ onNavigate, onGenerated }) {
         <>
           <div style={{ background: "var(--green-100)", border: "1px solid #a7f3d0", borderRadius: "var(--radius-md)", padding: 14, marginBottom: 16 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "var(--green-600)" }}>✓ FORM 5C BERHASIL DIGENERATE</div>
-            <div style={{ fontSize: 12, color: "var(--gray-600)", marginTop: 4 }}>Form 5C Digital siap untuk direview dan disetujui oleh BM.</div>
+            <div style={{ fontSize: 12, color: "var(--gray-600)", marginTop: 4 }}>Data konsumen berhasil ditarik dari ONE ME. Form 5C Digital siap direview oleh BM.</div>
           </div>
-          <button className="btn-primary" onClick={() => onGenerated && onGenerated(buildGeneratedAplikasi())}>
-            Lihat dan Approve form 5C
+          <button className="btn-primary" onClick={() => onGenerated && onGenerated(foundData)}>
+            Lihat dan Approve Form 5C
           </button>
         </>
       )}
     </div>
   );
 
+  // --- INPUT SCREEN ---
   return (
     <div className="page">
       <div style={{ marginBottom: 22 }}>
         <div style={{ fontSize: 20, fontWeight: 800 }} className="page-header">Generate Form 5C</div>
-        <div style={{ fontSize: 12, color: "var(--gray-500)", marginTop: 3 }}>Input data akan diambil otomatis dari ONE ME</div>
+        <div style={{ fontSize: 12, color: "var(--gray-500)", marginTop: 3 }}>Masukkan APP ID atau MID untuk menarik data dari ONE ME</div>
       </div>
       <div className="card">
-        <div className="section-label">Data Aplikasi (dari ONE ME)</div>
-        <div className="field"><label>Nama Konsumen</label><input value={form.name} onChange={e => set("name")(e.target.value)} placeholder="Masukkan nama konsumen" /></div>
-        <div className="grid-2">
-          <div className="field"><label>APP ID</label><input value={form.appId} onChange={e => set("appId")(e.target.value)} placeholder="5xxxxxxx" /></div>
-          <div className="field"><label>MID</label><input value={form.mid} onChange={e => set("mid")(e.target.value)} placeholder="7xxxxxxx" /></div>
+        <div className="section-label">Cari Data Konsumen</div>
+        <div style={{ fontSize: 11, color: "var(--gray-600)", marginBottom: 16, lineHeight: 1.6 }}>
+          Masukkan salah satu atau kedua nomor di bawah ini. Sistem akan otomatis menarik seluruh data konsumen dari ONE ME.
         </div>
-        <div className="field"><label>Tanggal Pengajuan</label><input type="date" value={form.tgl} onChange={e => set("tgl")(e.target.value)} /></div>
-        <div className="grid-2">
-          <div className="field"><label>Produk</label>
-            <select value={form.produk} onChange={e => set("produk")(e.target.value)}>
-              {PRODUK_LIST.map(p => <option key={p}>{p}</option>)}
-            </select>
-          </div>
-          <div className="field"><label>Engine Scoring</label>
-            <select value={form.engine} onChange={e => set("engine")(e.target.value)}>
-              {ENGINES.map(e => <option key={e}>{e}</option>)}
-            </select>
-          </div>
+        <div className="field">
+          <label>APP ID</label>
+          <input
+            value={appId}
+            onChange={e => { setAppId(e.target.value.replace(/\D/g, "").slice(0, 7)); setError(""); }}
+            placeholder="Masukkan 7 digit APP ID"
+            inputMode="numeric"
+            style={{ fontSize: 16, fontWeight: 700, letterSpacing: 2 }}
+          />
+          {appId.length > 0 && appId.length < 7 && (
+            <div style={{ fontSize: 10, color: "var(--amber-600)", marginTop: 4 }}>{7 - appId.length} digit lagi</div>
+          )}
+          {appId.length === 7 && (
+            <div style={{ fontSize: 10, color: "var(--green-600)", marginTop: 4 }}>✓ APP ID valid</div>
+          )}
         </div>
-        <div className="field"><label>Cabang</label>
-          {currentUser.branches.length > 1 ? (
-            <select value={form.cabang} onChange={e => set("cabang")(e.target.value)}>
-              {currentUser.branches.map(b => <option key={b}>{b}</option>)}
-            </select>
-          ) : <input value={form.cabang} readOnly style={{ background: "var(--gray-100)" }} />}
+        <div style={{ textAlign: "center", fontSize: 11, fontWeight: 700, color: "var(--gray-400)", padding: "4px 0" }}>atau</div>
+        <div className="field">
+          <label>MID</label>
+          <input
+            value={mid}
+            onChange={e => { setMid(e.target.value.replace(/\D/g, "").slice(0, 7)); setError(""); }}
+            placeholder="Masukkan 7 digit MID"
+            inputMode="numeric"
+            style={{ fontSize: 16, fontWeight: 700, letterSpacing: 2 }}
+          />
+          {mid.length > 0 && mid.length < 7 && (
+            <div style={{ fontSize: 10, color: "var(--amber-600)", marginTop: 4 }}>{7 - mid.length} digit lagi</div>
+          )}
+          {mid.length === 7 && (
+            <div style={{ fontSize: 10, color: "var(--green-600)", marginTop: 4 }}>✓ MID valid</div>
+          )}
         </div>
+        {error && (
+          <div style={{ fontSize: 11, color: "var(--red-600)", fontWeight: 600, marginTop: 4 }}>{error}</div>
+        )}
       </div>
       <div style={{ background: "var(--blue-50)", border: "1px solid var(--blue-100)", borderRadius: "var(--radius-md)", padding: 12, marginBottom: 16 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: "var(--blue-700)" }}>Data akan diambil otomatis dari ONE ME</div>
-        <div style={{ fontSize: 11, color: "var(--gray-600)", marginTop: 4 }}>SLIK, mutasi rekening, histori kredit, dan data konsumen akan dianalisis AI secara otomatis.</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "var(--blue-700)" }}>Data ditarik otomatis dari ONE ME</div>
+        <div style={{ fontSize: 11, color: "var(--gray-600)", marginTop: 4 }}>SLIK, mutasi rekening, histori kredit, data konsumen, dan seluruh kelengkapan akan dianalisis AI secara otomatis untuk menghasilkan Form 5C Digital.</div>
       </div>
-      <button className="btn-primary" onClick={() => setStep(0)}>
-        Generate Form 5C dengan AI
+      <button className="btn-primary" onClick={handleGenerate} disabled={!canGenerate} style={{ opacity: canGenerate ? 1 : 0.5 }}>
+        🔍 Tarik Data & Generate Form 5C
       </button>
     </div>
   );
